@@ -107,6 +107,11 @@
     #ja-frq-note a:hover { opacity: 0.8; }
   </style>
 </head>
+<script>
+if (location.pathname.endsWith('/index.html')) {
+  location.replace(location.pathname.replace(/index\.html$/, '') + location.search + location.hash);
+}
+</script>
 <body class="dark">
   <div class="tkinter-window">
     <div id="screen-main" class="screen active">
