@@ -133,7 +133,7 @@ async function playTrialViaAudio(height){
     for(let hn=1;hn<Math.min(maxH,30);hn++){
       const freq=height*hn;
       let amp=0; for(const c of targets){ amp+=Math.exp(-((freq-c)*(freq-c))/50000); }
-      s+=amp/Math.pow(hn,0.7)*Math.sin(2*Math.PI*freq*tt);
+      s+=amp/Math.pow(hn,0.9)*Math.sin(2*Math.PI*freq*tt);
     }
     sig[k]=s; if(Math.abs(s)>peak) peak=Math.abs(s);
   }
@@ -174,7 +174,7 @@ function playVowelSound(ctx,destinationNode,height){
     for(let hn=1;hn<Math.min(maxH,30);hn++){
       const freq=height*hn;
       let amp=0; for(const c of targets){ amp+=Math.exp(-((freq-c)*(freq-c))/50000); }
-      s+=amp/Math.pow(hn,0.7)*Math.sin(2*Math.PI*freq*tt);
+      s+=amp/Math.pow(hn,0.9)*Math.sin(2*Math.PI*freq*tt);
     }
     sig[k]=s; if(Math.abs(s)>peak) peak=Math.abs(s);
   }
@@ -215,7 +215,7 @@ function generateVowelData(vChar,height,duration=1.0){
   const targets=formantsFor(vChar,height);
   const sig=new Float64Array(n);let peak=0;
   const maxH=Math.floor(SR/2/height);
-  for(let i=0;i<n;i++){const tt=i/SR;let s=0;for(let hn=1;hn<Math.min(maxH,30);hn++){const freq=height*hn;let amp=0;for(const c of targets){amp+=Math.exp(-((freq-c)*(freq-c))/50000);}s+=amp/Math.pow(hn,0.7)*Math.sin(2*Math.PI*freq*tt);}sig[i]=s;if(Math.abs(s)>peak)peak=Math.abs(s);}
+  for(let i=0;i<n;i++){const tt=i/SR;let s=0;for(let hn=1;hn<Math.min(maxH,30);hn++){const freq=height*hn;let amp=0;for(const c of targets){amp+=Math.exp(-((freq-c)*(freq-c))/50000);}s+=amp/Math.pow(hn,0.9)*Math.sin(2*Math.PI*freq*tt);}sig[i]=s;if(Math.abs(s)>peak)peak=Math.abs(s);}
   const out=new Int16Array(n);if(peak>0){for(let i=0;i<n;i++){out[i]=Math.trunc(sig[i]/peak*0.7*32767);} }return out;
 }
 function concat(a,b){const out=new Int16Array(a.length+b.length);out.set(a,0);out.set(b,a.length);return out;}
