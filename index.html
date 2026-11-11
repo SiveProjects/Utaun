@@ -174,7 +174,7 @@ function playVowelSound(ctx,destinationNode,height){
     for(let hn=1;hn<Math.min(maxH,30);hn++){
       const freq=height*hn;
       let amp=0; for(const c of targets){ amp+=Math.exp(-((freq-c)*(freq-c))/50000); }
-      s+=amp/Math.pow(hn,0.5)*Math.sin(2*Math.PI*freq*tt);
+      s+=amp/Math.pow(hn,0.6)*Math.sin(2*Math.PI*freq*tt);
     }
     sig[k]=s; if(Math.abs(s)>peak) peak=Math.abs(s);
   }
