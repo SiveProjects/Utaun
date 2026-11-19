@@ -62,7 +62,7 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <div style="margin-bottom:12px;text-align:center"><label for="input-author">作者</label><div class="tk-input-wrap"><input id="input-author" type="text" value="" placeholder=""></div></div>
 <div style="margin-bottom:12px;text-align:center"><label for="input-readme">説明</label><div class="tk-input-wrap"><textarea id="input-readme" class="tk-textarea"></textarea></div></div>
 <div style="margin-bottom:12px;text-align:center"><span style="font-size:13px;display:block;margin-bottom:3px">文字コード</span>
-<div style="display:flex;justify-content:center;gap:30px;font-size:12px"><label style="cursor:pointer"><input type="radio" name="encoding" value="shift_jis" checked=""> Shift-JIS</label><label style="cursor:pointer"><input type="radio" name="encoding" value="utf-8"> UTF-8</label></div></div>
+<div style="display:flex;justify-content:center;gap:30px;font-size:12px"><label style="cursor:pointer"><input type="radio" name="encoding" value="shift_jis"> Shift-JIS</label><label style="cursor:pointer"><input type="radio" name="encoding" value="utf-8" checked=""> UTF-8（ハングルエイリアス用）</label></div></div>
 <div style="margin-bottom:12px;text-align:center"><span style="font-size:13px;display:block">高さ</span><div style="font-size:12px;text-align:right"><span id="height-val">242</span></div><input type="range" id="slider-height" min="100" max="600" value="242"></div>
 <div style="margin-bottom:12px;text-align:center"><span style="font-size:13px;display:block">声質</span><div style="font-size:12px" id="f3-label">ふつう</div><input type="range" id="slider-f3" min="0" max="1.5" step="0.01" value="1"><div style="display:flex;justify-content:space-between;font-size:12px"><span>おっさん声</span><span>アニメ声</span></div><div style="font-size:11px;color:var(--muted);margin-top:4px">声質を上げると明瞭・金属的・機械っぽく、下げると柔らかくこもる</div></div>
 <div class="card">
@@ -70,6 +70,12 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <p>1行 = 1音 = 1wav。CVだけ。自分のリストに書き換えてもOK。</p>
 <textarea class="reclist" id="cvlist"></textarea>
 <div style="font-size:12px;margin-top:6px">例：<code>ga → 가</code>、<code>kka → 까</code>、<code>geu → 그</code>、<code>geo → 거</code>、<code>aR → 아 + 休止</code>、<code>nR → ㄴ + 休止</code>、<code>br → ブレス</code></div>
+</div>
+<div class="card">
+<h2>VC レコリスト（136音 = 母音17 × パッチム8）</h2>
+<p>パッチムのしっぽ用。1行 = 1音 = 1wav。打つときは <code>ha</code> + <code>a n</code> の2ノートで <code>한</code> になる。</p>
+<textarea class="reclist" id="vclist"></textarea>
+<div style="font-size:12px;margin-top:6px">例：<code>a n → 안</code>、<code>eu l → 을</code>、<code>o h → 옿</code>、<code>o t → 옫</code>。パッチムは7音に集約：<code>k=ㄱ/ㅋ/ㄲ、n=ㄴ、t=ㄷ/ㅅ/ㅆ/ㅈ/ㅊ/ㅌ/ㅎ、l=ㄹ、m=ㅁ、p=ㅂ/ㅍ、ng=ㅇ、h=ㅎ(息)</code></div>
 </div>
 <div class="card">
 <h2>試聴 - 요 ≠ 유</h2>
@@ -92,7 +98,7 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <h2>oto.ini の合わせ方</h2>
 <p>1wav = 1音。エイリアスは4種出す。</p>
 <p><code>가.wav=ga,0,100,0,30,15</code><br><code>가.wav=가,0,100,0,30,15</code><br><code>가.wav=_ga,0,100,0,30,15</code><br><code>가.wav=_가,0,100,0,30,15</code><br>ローマ字でもハングルでも打てる。</p>
-<p>変換：<code>ka→카</code> ㅋ+ㅏ、<code>ga→가</code> ㄱ+ㅏ、<code>kka→까</code> ㄲ+ㅏ、<code>in→인</code> はCVリストに無いので、VCが要る場合は別途。R=休止、br=ブレス、ng=鼻音。</p>
+<p>変換：<code>ka→카</code> ㅋ+ㅏ、<code>ga→가</code> ㄱ+ㅏ、<code>kka→까</code> ㄲ+ㅏ。R=休止、br=ブレス、ng=鼻音。</p><p><b>VCでパッチム：</b><code>한</code> は <code>ha</code> + <code>a n</code>、<code>글</code> は <code>geu</code> + <code>eu l</code>、<code>좋</code> は <code>jo</code> + <code>o h</code>。ハングルなら <code>하</code> + <code>안</code>、<code>그</code> + <code>을</code>、<code>조</code> + <code>옿</code>。だから <code>한글</code> は <code>ha</code> <code>a n</code> <code>geu</code> <code>eu l</code> の4ノートで打つ。</p><p><b>そのまま打ち対応：</b><code>한</code> って打ったら <code>하.wav</code>、<code>글</code> って打ったら <code>그.wav</code>、<code>좋</code> って打ったら <code>조.wav</code> が鳴る。終声つきハングルは全部同じCVのwavにエイリアスしてあるから、<code>한글</code> って2ノートで打てば <code>하</code> <code>그</code> で歌える。音は終声なしのCVだけど、打つときは終声つきでOK。</p>
 </div>
 <div class="card">
 <h2>子音.wav が ひらがな名のとき</h2>
@@ -110,6 +116,10 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <script>
 
 const CV_LIST_DEFAULT = ["ga", "gi", "gu", "ge", "go", "geu", "geo", "gya", "gyu", "gyeo", "gyo", "gye", "gwa", "geui", "gwi", "gwe", "gweo", "gga", "ggi", "ggu", "gge", "ggo", "ggeu", "ggeo", "ggya", "ggyu", "ggyeo", "ggyo", "ggye", "ggwa", "ggeui", "ggwi", "ggwe", "ggweo", "na", "ni", "nu", "ne", "no", "neu", "neo", "nya", "nyu", "nyeo", "nyo", "nye", "nwa", "neui", "nwi", "nwe", "nweo", "da", "di", "du", "de", "do", "deu", "deo", "dya", "dyu", "dyeo", "dyo", "dye", "dwa", "deui", "dwi", "dwe", "dweo", "dda", "ddi", "ddu", "dde", "ddo", "ddeu", "ddeo", "ddya", "ddyu", "ddyeo", "ddyo", "ddye", "ddwa", "ddeui", "ddwi", "ddwe", "ddweo", "ra", "ri", "ru", "re", "ro", "reu", "reo", "rya", "ryu", "ryeo", "ryo", "rye", "rwa", "reui", "rwi", "rwe", "rweo", "ma", "mi", "mu", "me", "mo", "meu", "meo", "mya", "myu", "myeo", "myo", "mye", "mwa", "meui", "mwi", "mwe", "mweo", "ba", "bi", "bu", "be", "bo", "beu", "beo", "bya", "byu", "byeo", "byo", "bye", "bwa", "beui", "bwi", "bwe", "bweo", "bba", "bbi", "bbu", "bbe", "bbo", "bbeu", "bbeo", "bbya", "bbyu", "bbyeo", "bbyo", "bbye", "bbwa", "bbeui", "bbwi", "bbwe", "bbweo", "sa", "si", "su", "se", "so", "seu", "seo", "sya", "syu", "syeo", "syo", "sye", "swa", "seui", "swi", "swe", "sweo", "ssa", "ssi", "ssu", "sse", "sso", "sseu", "sseo", "ssya", "ssyu", "ssyeo", "ssyo", "ssye", "sswa", "sseui", "sswi", "sswe", "ssweo", "aR", "iR", "uR", "eR", "oR", "euR", "eoR", "ya", "yu", "yeo", "yo", "ye", "wa", "wi", "we", "weo", "eui", "ja", "ji", "ju", "je", "jo", "jeu", "jeo", "jya", "jyu", "jyeo", "jyo", "jye", "jwa", "jeui", "jwi", "jwe", "jweo", "jja", "jji", "jju", "jje", "jjo", "jjeu", "jjeo", "jjya", "jjyu", "jjyeo", "jjyo", "jjye", "jjwa", "jjeui", "jjwi", "jjwe", "jjweo", "cha", "chi", "chu", "che", "cho", "cheu", "cheo", "chya", "chyu", "chyeo", "chyo", "chye", "chwa", "cheui", "chwi", "chwe", "chweo", "ka", "ki", "ku", "ke", "ko", "keu", "keo", "kya", "kyu", "kyeo", "kyo", "kye", "kwa", "keui", "kwi", "kwe", "kweo", "ta", "ti", "tu", "te", "to", "teu", "teo", "tya", "tyu", "tyeo", "tyo", "tye", "twa", "teui", "twi", "twe", "tweo", "pa", "pi", "pu", "pe", "po", "peu", "peo", "pya", "pyu", "pyeo", "pyo", "pye", "pwa", "peui", "pwi", "pwe", "pweo", "ha", "hi", "hu", "he", "ho", "heu", "heo", "hya", "hyu", "hyeo", "hyo", "hye", "hwa", "heui", "hwi", "hwe", "hweo", "nR", "mR", "ngR", "lR", "br"];
+const VC_VOWELS = ["a","i","u","e","o","eo","eu","ya","ye","yeo","yo","yu","wa","we","weo","wi","eui"];
+const VC_CODAS = ["k","n","t","l","m","p","ng","h"];
+const VC_LIST_DEFAULT = [];
+for(const _v of VC_VOWELS){ for(const _c of VC_CODAS){ VC_LIST_DEFAULT.push(_v+" "+_c); } }
 var $t = 44100;
 var ty = {"あ":[750,1185,2900],"い":[283,2241,3200],"う":[312,766,2300],"え":[512,1925,2900],"お":[436,740,2400],"ん":[300,800,2200],"아":[750,1185,2900],"이":[283,2241,3200],"우":[312,766,2300],"오":[436,740,2400],"애":[528,1931,2800],"어":[515,980,2400],"에":[512,1925,2900],"으":[362,1164,2400],"ㅏ":[750,1185,2900],"ㅣ":[283,2241,3200],"ㅜ":[312,766,2300],"ㅗ":[436,740,2400],"ㅐ":[528,1931,2800],"ㅓ":[515,980,2400],"ㅔ":[512,1925,2900],"ㅡ":[362,1164,2400],"ㅑ":[750,1185,2900],"ㅕ":[515,980,2400],"ㅛ":[436,740,2400],"ㅠ":[312,766,2300],"ㅖ":[512,1925,2900],"ㅘ":[750,1185,2900],"ㅙ":[528,1931,2800],"ㅚ":[512,1925,2900],"ㅝ":[515,980,2400],"ㅞ":[512,1925,2900],"ㅟ":[283,2241,3200],"ㅢ":[362,1164,2400]};
 const JAMO_TO_SYLLABLE={"ㅏ":"아","ㅐ":"애","ㅑ":"야","ㅒ":"얘","ㅓ":"어","ㅔ":"에","ㅕ":"여","ㅖ":"예","ㅗ":"오","ㅘ":"와","ㅙ":"왜","ㅚ":"외","ㅛ":"요","ㅜ":"우","ㅝ":"워","ㅞ":"웨","ㅟ":"위","ㅠ":"유","ㅡ":"으","ㅢ":"의","ㅣ":"이"};
@@ -216,6 +226,7 @@ let height=242, f3=1;
 document.getElementById('slider-height').addEventListener('input', e=>{height=+e.target.value; document.getElementById('height-val').textContent=height;});
 document.getElementById('slider-f3').addEventListener('input', e=>{f3=+e.target.value; document.getElementById('f3-label').textContent = f3===0?"声質変更オフ": f3<=0.75?"おっさん声": f3>=1.25?"アニメ声":"ふつう";});
 document.getElementById('cvlist').value = CV_LIST_DEFAULT.join('\n');
+document.getElementById('vclist').value = VC_LIST_DEFAULT.join('\n');
 function toggleTheme(){ const app=document.getElementById('app'); const cur=app.getAttribute('data-theme'); app.setAttribute('data-theme', cur==="dark"?"light":"dark"); }
 async function playSample(ch){
   const h=height;
@@ -350,6 +361,41 @@ async function generate(){
       const pct=Math.floor((idx+1)/cvTokens.length*100);
       document.getElementById('bar').style.width=pct+"%";
       document.getElementById('status').textContent=`生成中… CV ${idx+1} / ${cvTokens.length} (${pct}%)`;
+      if(idx%10===0) await new Promise(r=>setTimeout(r,0));
+    }
+    // ===== VC生成 (パッチム) =====
+    const CODA_JAMO = {"k":"ㄱ","n":"ㄴ","t":"ㄷ","l":"ㄹ","m":"ㅁ","p":"ㅂ","ng":"ㅇ","h":"ㅎ"};
+    const vcText = document.getElementById('vclist').value;
+    const vcTokens = vcText.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    for(let idx=0; idx<vcTokens.length; idx++){
+      const tok = vcTokens[idx];
+      const parts = tok.split(/\s+/);
+      if(parts.length!==2) continue;
+      const [vRom, cRom] = parts;
+      const jung = VOWEL_ROMAJI[vRom];
+      const codaJamo = CODA_JAMO[cRom];
+      if(!jung || !codaJamo) continue;
+      const vSyll = JAMO_TO_SYLLABLE[jung] || jung;
+      const vSigFull = A[vSyll] || ly(vSyll,h,1,f3);
+      const vPart = vSigFull.subarray(0, Math.floor($t*0.3));
+      let cTail = synthCodaFallback(codaJamo);
+      if(cTail.length > Math.floor($t*0.12)) cTail = cTail.subarray(0, Math.floor($t*0.12));
+      const segVC = ed(vPart, cTail);
+      const vcCode = 0xAC00 + 11*588 + VOWEL_IDX[jung]*28 + JONG_IDX[codaJamo];
+      const vcHang = String.fromCharCode(vcCode);
+      const wavNameVC = vcHang + ".wav";
+      put(wavNameVC, Zi(segVC));
+      const durMsVC = Math.floor(segVC.length/$t*1000);
+      const preVC = Math.min(30, Math.floor(durMsVC*0.3));
+      const aliasVC = vRom + " " + cRom;
+      const aliasVC_nospace = vRom + cRom;
+      otoLines.push(`${wavNameVC}=${aliasVC},0,${durMsVC},0,${preVC},15`);
+      otoLines.push(`${wavNameVC}=${vcHang},0,${durMsVC},0,${preVC},15`);
+      otoLines.push(`${wavNameVC}=_${aliasVC},0,${durMsVC},0,${preVC},15`);
+      otoLines.push(`${wavNameVC}=_${vcHang},0,${durMsVC},0,${preVC},15`);
+      otoLines.push(`${wavNameVC}=${aliasVC_nospace},0,${durMsVC},0,${preVC},15`);
+      const pctVC = Math.floor((idx+1)/vcTokens.length*100);
+      document.getElementById('status').textContent=`生成中… VC ${idx+1} / ${vcTokens.length} (${pctVC}%)`;
       if(idx%10===0) await new Promise(r=>setTimeout(r,0));
     }
     for(let L of Object.keys(Ko)){ otoLines.push(`${L}.wav=${L},0,100,0,100,50`); }
