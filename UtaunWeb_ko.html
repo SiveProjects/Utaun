@@ -52,7 +52,7 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <div class="wrap" id="app" data-theme="light">
 <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:15px"><h1>Utaun</h1><button class="btn" onclick="toggleTheme()">🌙 / ☀️</button></div>
 <p style="text-align:center;font-size:12px;color:var(--muted);margin:-8px 0 12px">CVのみ版 / 328音 / マルチャ・フル11172通り削除済み / 音とハングル一致修正済み</p>
-<div class="card fix"><b>修正点</b><br>・継ぎ目はゼロクロス付近でカット + 5msクロスフェード、wavの頭・お尻は128サンプルでフェードしてクリック除去。<br>
+<div class="card fix"><b>修正点</b><br>
 ・KChoのローマ字を修正：ㄱ=ga / ㅋ=ka、ㄷ=da / ㅌ=ta、ㅂ=ba / ㅍ=pa、ㄲ=kka、ㄸ=tta、ㅃ=ppa、ㅉ=jja。以前は ㄱとㅋ が両方 ka で、가.wav が カの音になっていた。<br>
 ・CVの子音変換を KCho 引きに統一。gg→ga 等の手書き変換を廃止。<br>
 ・子音なしのときの合成フォールバック (jamoMap) を拡充。<br>
@@ -70,6 +70,10 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <p>1行 = 1音 = 1wav。CVだけ。自分のリストに書き換えてもOK。</p>
 <textarea class="reclist" id="cvlist"></textarea>
 <div style="font-size:12px;margin-top:6px">例：<code>ga → 가</code>、<code>kka → 까</code>、<code>geu → 그</code>、<code>geo → 거</code>、<code>aR → 아 + 休止</code>、<code>nR → ㄴ + 休止</code>、<code>br → ブレス</code></div>
+</div>
+<div class="card">
+<label style="cursor:pointer;font-size:13px"><input type="checkbox" id="chk-full" checked=""> パッチム付きフル音節も作る（한, 글, 좋 など / CV 328 × パッチム8 = 2624音、少し重いけど 한 って1ノートでそのまま歌える）</label>
+<div style="font-size:12px;color:var(--muted);margin-top:4px">オフにすると CV+VCの2ノート打ち（ha + a n）だけになる。オンにすると 한.wav / 글.wav / 좋.wav がパッチムの音つきで作られる。</div>
 </div>
 <div class="card">
 <h2>試聴 - 요 ≠ 유</h2>
@@ -115,26 +119,8 @@ var ty = {"あ":[750,1185,2900],"い":[283,2241,3200],"う":[312,766,2300],"え"
 function ry(e,n,t=1){let r=ty[e]||[800,1200,2500],l=Math.max(0,n-200)*0.25;if(t===0)return[(r[0]+l)*1.25,(r[1]+l)*1.25];return[(r[0]+l)*1.25,(r[1]+l)*1.25,(r[2]+l)*1.25*t]}
 function qi(e,n,t,r=1,l=$t){let u=Math.floor(l*r),o=ry(e,n,t),i=new Float64Array(u),s=0,f=Math.floor(l/2/n),y=o.length>2,p=0.55+0.45*(Math.min(Math.max(t,0),1.5)/1.5);for(let g=0;g<u;g++){let S=g/l,k=0;for(let M=1;M<Math.min(f,30);M++){let d=n*M,a=0;for(let c=0;c<o.length;c++){let v=o[c];if(c<2)a+=Math.exp(-((d-v)*(d-v))/50000);else a+=0.42*Math.exp(-((d-v)*(d-v))/200000)}if(y){let c=Math.max(0,d-3600),v=1/(1+Math.pow(c/4500,2)*p);a*=Math.max(0.12,v)}k+=a/Math.pow(M,0.9)*Math.sin(2*Math.PI*d*S)}if(i[g]=k,Math.abs(k)>s)s=Math.abs(k)}return{sig:i,peak:s,n:u}}
 function ly(e,n,t=1,r=1){let{sig:l,peak:u,n:o}=qi(e,n,r,t,$t),i=new Int16Array(o);if(u>0)for(let s=0;s<o;s++)i[s]=Math.trunc(l[s]/u*0.7*32767);return i}
-function ed(e,n){
-  if(e.length===0) return n.slice();
-  if(n.length===0) return e.slice();
-  let eEnd=e.length;
-  let bestE=eEnd, bestVal=Math.abs(e[eEnd-1]);
-  for(let i=0;i<Math.min(200,e.length);i++){ let v=Math.abs(e[eEnd-1-i]); if(v<bestVal){ bestVal=v; bestE=eEnd-1-i; } }
-  let bestN=0, bestValN=Math.abs(n[0]);
-  for(let i=0;i<Math.min(200,n.length);i++){ let v=Math.abs(n[i]); if(v<bestValN){ bestValN=v; bestN=i; } }
-  let fade=Math.min(220, Math.floor(bestE/2), Math.floor((n.length-bestN)/2));
-  if(fade<8) fade=0;
-  if(fade===0){ let out=new Int16Array(bestE+(n.length-bestN)); out.set(e.subarray(0,bestE),0); out.set(n.subarray(bestN),bestE); return out; }
-  let outLen=bestE-fade+(n.length-bestN);
-  let out=new Int16Array(outLen);
-  out.set(e.subarray(0,bestE-fade),0);
-  for(let i=0;i<fade;i++){ let a=e[bestE-fade+i]/32768; let b=n[bestN+i]/32768; let w=i/fade; let mix=a*Math.cos(w*Math.PI/2)+b*Math.sin(w*Math.PI/2); out[bestE-fade+i]=Math.max(-32767,Math.min(32767,Math.trunc(mix*32767))); }
-  out.set(n.subarray(bestN+fade),bestE);
-  return out;
-}
-function fadeEdges(seg,len=128){ let L=Math.min(len,Math.floor(seg.length/4)); for(let i=0;i<L;i++){ let w=i/L; seg[i]=Math.trunc(seg[i]*w); seg[seg.length-1-i]=Math.trunc(seg[seg.length-1-i]*w); } return seg; }
-function Zi(e){ e=fadeEdges(e.slice(),128); let n=e.length,t=new ArrayBuffer(44+n*2),r=new DataView(t),l=(u,o)=>{for(let i=0;i<o.length;i++)r.setUint8(u+i,o.charCodeAt(i))};l(0,"RIFF"),r.setUint32(4,36+n*2,!0),l(8,"WAVE"),l(12,"fmt "),r.setUint32(16,16,!0),r.setUint16(20,1,!0),r.setUint16(22,1,!0),r.setUint32(24,$t,!0),r.setUint32(28,$t*2,!0),r.setUint16(32,2,!0),r.setUint16(34,16,!0),l(36,"data"),r.setUint32(40,n*2,!0);for(let u=0;u<n;u++)r.setInt16(44+u*2,e[u],!0);return new Uint8Array(t)}
+function ed(e,n){let t=new Int16Array(e.length+n.length);t.set(e,0);t.set(n,e.length);return t}
+function Zi(e){let n=e.length,t=new ArrayBuffer(44+n*2),r=new DataView(t),l=(u,o)=>{for(let i=0;i<o.length;i++)r.setUint8(u+i,o.charCodeAt(i))};l(0,"RIFF"),r.setUint32(4,36+n*2,!0),l(8,"WAVE"),l(12,"fmt "),r.setUint32(16,16,!0),r.setUint16(20,1,!0),r.setUint16(22,1,!0),r.setUint32(24,$t,!0),r.setUint32(28,$t*2,!0),r.setUint16(32,2,!0),r.setUint16(34,16,!0),l(36,"data"),r.setUint32(40,n*2,!0);for(let u=0;u<n;u++)r.setInt16(44+u*2,e[u],!0);return new Uint8Array(t)}
 function ji(e){let n=4294967295; const uy=(()=>{let e=new Uint32Array(256);for(let n=0;n<256;n++){let t=n;for(let r=0;r<8;r++)t=t&1?3988292384^t>>>1:t>>>1;e[n]=t>>>0}return e})(); for(let t=0;t<e.length;t++)n=uy[(n^e[t])&255]^n>>>8; return (n^4294967295)>>>0}
 function py(e,n){let r=e.length-44>>1,l=new DataView(e.buffer,e.byteOffset,e.byteLength),u=Math.max(1,Math.ceil(r/256)),o=new Uint8Array(40+u*16),i=new DataView(o.buffer);"FREQ0003".split("").forEach((s,f)=>o[f]=s.charCodeAt(0)),i.setInt32(8,256,!0),i.setFloat64(12,n,!0),i.setInt32(36,u,!0);for(let s=0;s<u;s++){let f=s*256,y=Math.min(r,f+256),m=0;for(let p=f;p<y;p++){let g=Math.abs(l.getInt16(44+p*2,!0)/32768);if(g>m)m=g}i.setFloat64(40+s*16,n,!0),i.setFloat64(48+s*16,m,!0)}return o}
 async function iy(e){let n=new TextEncoder,t=new Date,r=t.getHours()<<11|t.getMinutes()<<5|t.getSeconds()>>1,l=t.getFullYear()-1980<<9|t.getMonth()+1<<5|t.getDate(),u=[],o=[],i=0;for(let[y,m]of e){let p=n.encode(y),g=ji(m),S=null; try{let r2=new Blob([m]).stream().pipeThrough(new window.CompressionStream("deflate-raw")); S=new Uint8Array(await new Response(r2).arrayBuffer());}catch{} let k=S&&S.length<m.length, M=k?S:m, d=k?8:0, a=new DataView(new ArrayBuffer(30)); a.setUint32(0,67324752,!0);a.setUint16(4,20,!0);a.setUint16(6,2048,!0);a.setUint16(8,d,!0);a.setUint16(10,r,!0);a.setUint16(12,l,!0);a.setUint32(14,g,!0);a.setUint32(18,M.length,!0);a.setUint32(22,m.length,!0);a.setUint16(26,p.length,!0);a.setUint16(28,0,!0);u.push(new Uint8Array(a.buffer),p,M);let c=new DataView(new ArrayBuffer(46));c.setUint32(0,33639248,!0);c.setUint16(4,20,!0);c.setUint16(6,20,!0);c.setUint16(8,2048,!0);c.setUint16(10,d,!0);c.setUint16(12,r,!0);c.setUint16(14,l,!0);c.setUint32(16,g,!0);c.setUint32(20,M.length,!0);c.setUint32(24,m.length,!0);c.setUint16(28,p.length,!0);c.setUint32(42,i,!0);o.push(new Uint8Array(c.buffer),p);i+=30+p.length+M.length}let s=o.reduce((y,m)=>y+m.length,0),f=new DataView(new ArrayBuffer(22));f.setUint32(0,101010256,!0);f.setUint16(8,e.size,!0);f.setUint16(10,e.size,!0);f.setUint32(12,s,!0);f.setUint32(16,i,!0);return new Blob([...u,...o,new Uint8Array(f.buffer)],{type:"application/zip"})}
@@ -263,6 +249,7 @@ async function generate(){
     const folder=name ? name.replace(/[\\/:*?"<>|]/g,"_")+"/" : "";
     const encFn=(s)=>cy(s,enc);
     const D=new Map();
+    const fullSegMap=new Map();
     const put=(p,bytes)=>D.set(folder+p, bytes);
     const warnings=new Set();
     put("character.txt", encFn(`name=${name}\r\nimage=icon.jpg\r\nauthor=${author}`));
@@ -354,6 +341,7 @@ async function generate(){
       else { wavName=tok+".wav"; }
       // 重複チェック: 同じ wavName が既にある場合は上書きしないでログだけ出す (例: ya と 야 が同じ)
       put(wavName, Zi(seg));
+      if(hang && hang.length===1 && hang.charCodeAt(0)>=0xAC00 && (hang.charCodeAt(0)-0xAC00)%28===0){ fullSegMap.set(hang, seg); }
       const durMs=Math.floor(seg.length/$t*1000);
       const pre=Math.min(30, Math.floor(durMs*0.3));
       otoLines.push(`${wavName}=${aliasRom},0,${durMs},0,${pre},15`);
@@ -368,6 +356,64 @@ async function generate(){
       document.getElementById('bar').style.width=pct+"%";
       document.getElementById('status').textContent=`生成中… CV ${idx+1} / ${cvTokens.length} (${pct}%)`;
       if(idx%10===0) await new Promise(r=>setTimeout(r,0));
+    }
+    // ★ パッチム付きもそのまま打てるように: 終声つきハングルをCVのwavにエイリアス (한→하.wav, 글→그.wav, 좋→조.wav) ※VC wavと被るものはスキップ
+    {
+      const _jongList2 = Object.keys(JONG_IDX).filter(j=>j!=="");
+      const _seen2 = new Set(otoLines.map(l=>{ const _p=l.split("="); return _p.length>1 ? _p[1].split(",")[0] : ""; }).filter(Boolean));
+      const _wavSet = new Set([...D.keys()].map(k=>k.split("/").pop()));
+      for(const [wavPath] of [...D]){
+        if(!wavPath.endsWith(".wav")) continue;
+        const _base = wavPath.split("/").pop().replace(".wav","");
+        if(_base.length!==1) continue;
+        const _code=_base.charCodeAt(0);
+        if(_code<0xAC00||_code>0xD7A3) continue;
+        if((_code-0xAC00)%28!==0) continue;
+        // VC wav (ㅇ + 母音 + パッチム) はそのままが正解なので、CVのエイリアス展開では触らない
+        const _onsetIdx = Math.floor((_code-0xAC00)/588);
+        if(_onsetIdx===11) continue;
+        for(const _jong of _jongList2){
+          const _codaHang = String.fromCharCode(_code + JONG_IDX[_jong]);
+          if(_seen2.has(_codaHang)||_seen2.has("_"+_codaHang)) continue;
+          if(_wavSet.has(_codaHang+".wav")) continue;
+          const _wavName = _base+".wav";
+          otoLines.push(`${_wavName}=${_codaHang},0,100,0,30,15`);
+          otoLines.push(`${_wavName}=_${_codaHang},0,100,0,30,15`);
+          _seen2.add(_codaHang); _seen2.add("_"+_codaHang);
+        }
+      }
+    }
+    // ===== パッチム付きフル音節生成 (한.wav = ha + ㄴしっぽ) =====
+    if(document.getElementById('chk-full') && document.getElementById('chk-full').checked){
+      const _codaRomList = [["k","k"],["n","n"],["t","t"],["l","l"],["m","m"],["p","p"],["ng","ng"],["h","h"]];
+      const _codaJamoFull = {"k":"ㄱ","n":"ㄴ","t":"ㄷ","l":"ㄹ","m":"ㅁ","p":"ㅂ","ng":"ㅇ","h":"ㅎ"};
+      // CVのローマ字を hang から逆引きするためのマップ (hang -> aliasRom)
+      const _hangToRom = new Map();
+      for(const _line of otoLines){ const _m=_line.match(/^(.+\.wav)=([^,]+),/); if(_m){ const _wav=_m[1]; const _al=_m[2]; if(!_al.startsWith("_") && !_al.includes(" ") && _wav.replace(".wav","").length===1){ if(!_hangToRom.has(_wav.replace(".wav",""))) _hangToRom.set(_wav.replace(".wav",""), _al); } } }
+      let _fullCount=0;
+      for(const [ _baseHang, _baseSeg ] of fullSegMap){
+        const _baseCode=_baseHang.charCodeAt(0);
+        const _baseRom=_hangToRom.get(_baseHang) || _baseHang;
+        for(const [_cRom,_cKey] of _codaRomList){
+          const _cJamo=_codaJamoFull[_cKey];
+          const _fullHang=String.fromCharCode(_baseCode + JONG_IDX[_cJamo]);
+          if(D.has(_fullHang+".wav")) continue;
+          let _tail=synthCodaFallback(_cJamo);
+          if(_tail.length>Math.floor($t*0.12)) _tail=_tail.subarray(0, Math.floor($t*0.12));
+          const _fullSeg=ed(_baseSeg, _tail);
+          const _fullWav=_fullHang+".wav";
+          put(_fullWav, Zi(_fullSeg));
+          const _durFull=Math.floor(_fullSeg.length/$t*1000);
+          const _preFull=Math.min(30, Math.floor(_durFull*0.3));
+          const _romFull=_baseRom + _cRom;
+          otoLines.push(`${_fullWav}=${_fullHang},0,${_durFull},0,${_preFull},15`);
+          otoLines.push(`${_fullWav}=_${_fullHang},0,${_durFull},0,${_preFull},15`);
+          otoLines.push(`${_fullWav}=${_romFull},0,${_durFull},0,${_preFull},15`);
+          otoLines.push(`${_fullWav}=_${_romFull},0,${_durFull},0,${_preFull},15`);
+          _fullCount++;
+          if(_fullCount%200===0){ document.getElementById('status').textContent=`生成中… フル音節 ${_fullCount} / ${fullSegMap.size*8}`; await new Promise(r=>setTimeout(r,0)); }
+        }
+      }
     }
     for(let L of Object.keys(Ko)){ otoLines.push(`${L}.wav=${L},0,100,0,100,50`); }
     for(const [syll] of diphList){ otoLines.push(`${syll}.wav=${syll},0,30,0,30,15`); }
