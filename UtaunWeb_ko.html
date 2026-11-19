@@ -52,7 +52,7 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <div class="wrap" id="app" data-theme="light">
 <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:15px"><h1>Utaun</h1><button class="btn" onclick="toggleTheme()">🌙 / ☀️</button></div>
 <p style="text-align:center;font-size:12px;color:var(--muted);margin:-8px 0 12px">CVのみ版 / 328音 / マルチャ・フル11172通り削除済み / 音とハングル一致修正済み</p>
-<div class="card fix"><b>修正点</b><br>
+<div class="card fix"><b>修正点</b><br>・継ぎ目はゼロクロス付近でカット + 5msクロスフェード、wavの頭・お尻は128サンプルでフェードしてクリック除去。<br>
 ・KChoのローマ字を修正：ㄱ=ga / ㅋ=ka、ㄷ=da / ㅌ=ta、ㅂ=ba / ㅍ=pa、ㄲ=kka、ㄸ=tta、ㅃ=ppa、ㅉ=jja。以前は ㄱとㅋ が両方 ka で、가.wav が カの音になっていた。<br>
 ・CVの子音変換を KCho 引きに統一。gg→ga 等の手書き変換を廃止。<br>
 ・子音なしのときの合成フォールバック (jamoMap) を拡充。<br>
@@ -62,7 +62,7 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <div style="margin-bottom:12px;text-align:center"><label for="input-author">作者</label><div class="tk-input-wrap"><input id="input-author" type="text" value="" placeholder=""></div></div>
 <div style="margin-bottom:12px;text-align:center"><label for="input-readme">説明</label><div class="tk-input-wrap"><textarea id="input-readme" class="tk-textarea"></textarea></div></div>
 <div style="margin-bottom:12px;text-align:center"><span style="font-size:13px;display:block;margin-bottom:3px">文字コード</span>
-<div style="display:flex;justify-content:center;gap:30px;font-size:12px"><label style="cursor:pointer"><input type="radio" name="encoding" value="shift_jis"> Shift-JIS</label><label style="cursor:pointer"><input type="radio" name="encoding" value="utf-8" checked=""> UTF-8（ハングルエイリアス用）</label></div></div>
+<div style="display:flex;justify-content:center;gap:30px;font-size:12px"><label style="cursor:pointer"><input type="radio" name="encoding" value="shift_jis" checked=""> Shift-JIS</label><label style="cursor:pointer"><input type="radio" name="encoding" value="utf-8"> UTF-8</label></div></div>
 <div style="margin-bottom:12px;text-align:center"><span style="font-size:13px;display:block">高さ</span><div style="font-size:12px;text-align:right"><span id="height-val">242</span></div><input type="range" id="slider-height" min="100" max="600" value="242"></div>
 <div style="margin-bottom:12px;text-align:center"><span style="font-size:13px;display:block">声質</span><div style="font-size:12px" id="f3-label">ふつう</div><input type="range" id="slider-f3" min="0" max="1.5" step="0.01" value="1"><div style="display:flex;justify-content:space-between;font-size:12px"><span>おっさん声</span><span>アニメ声</span></div><div style="font-size:11px;color:var(--muted);margin-top:4px">声質を上げると明瞭・金属的・機械っぽく、下げると柔らかくこもる</div></div>
 <div class="card">
@@ -70,12 +70,6 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <p>1行 = 1音 = 1wav。CVだけ。自分のリストに書き換えてもOK。</p>
 <textarea class="reclist" id="cvlist"></textarea>
 <div style="font-size:12px;margin-top:6px">例：<code>ga → 가</code>、<code>kka → 까</code>、<code>geu → 그</code>、<code>geo → 거</code>、<code>aR → 아 + 休止</code>、<code>nR → ㄴ + 休止</code>、<code>br → ブレス</code></div>
-</div>
-<div class="card">
-<h2>VC レコリスト（136音 = 母音17 × パッチム8）</h2>
-<p>パッチムのしっぽ用。1行 = 1音 = 1wav。打つときは <code>ha</code> + <code>a n</code> の2ノートで <code>한</code> になる。</p>
-<textarea class="reclist" id="vclist"></textarea>
-<div style="font-size:12px;margin-top:6px">例：<code>a n → 안</code>、<code>eu l → 을</code>、<code>o h → 옿</code>、<code>o t → 옫</code>。パッチムは7音に集約：<code>k=ㄱ/ㅋ/ㄲ、n=ㄴ、t=ㄷ/ㅅ/ㅆ/ㅈ/ㅊ/ㅌ/ㅎ、l=ㄹ、m=ㅁ、p=ㅂ/ㅍ、ng=ㅇ、h=ㅎ(息)</code></div>
 </div>
 <div class="card">
 <h2>試聴 - 요 ≠ 유</h2>
@@ -98,7 +92,7 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <h2>oto.ini の合わせ方</h2>
 <p>1wav = 1音。エイリアスは4種出す。</p>
 <p><code>가.wav=ga,0,100,0,30,15</code><br><code>가.wav=가,0,100,0,30,15</code><br><code>가.wav=_ga,0,100,0,30,15</code><br><code>가.wav=_가,0,100,0,30,15</code><br>ローマ字でもハングルでも打てる。</p>
-<p>変換：<code>ka→카</code> ㅋ+ㅏ、<code>ga→가</code> ㄱ+ㅏ、<code>kka→까</code> ㄲ+ㅏ。R=休止、br=ブレス、ng=鼻音。</p><p><b>VCでパッチム：</b><code>한</code> は <code>ha</code> + <code>a n</code>、<code>글</code> は <code>geu</code> + <code>eu l</code>、<code>좋</code> は <code>jo</code> + <code>o h</code>。ハングルなら <code>하</code> + <code>안</code>、<code>그</code> + <code>을</code>、<code>조</code> + <code>옿</code>。だから <code>한글</code> は <code>ha</code> <code>a n</code> <code>geu</code> <code>eu l</code> の4ノートで打つ。</p><p><b>そのまま打ち対応：</b><code>한</code> って打ったら <code>하.wav</code>、<code>글</code> って打ったら <code>그.wav</code>、<code>좋</code> って打ったら <code>조.wav</code> が鳴る。終声つきハングルは全部同じCVのwavにエイリアスしてあるから、<code>한글</code> って2ノートで打てば <code>하</code> <code>그</code> で歌える。音は終声なしのCVだけど、打つときは終声つきでOK。</p>
+<p>変換：<code>ka→카</code> ㅋ+ㅏ、<code>ga→가</code> ㄱ+ㅏ、<code>kka→까</code> ㄲ+ㅏ、<code>in→인</code> はCVリストに無いので、VCが要る場合は別途。R=休止、br=ブレス、ng=鼻音。</p>
 </div>
 <div class="card">
 <h2>子音.wav が ひらがな名のとき</h2>
@@ -116,18 +110,31 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <script>
 
 const CV_LIST_DEFAULT = ["ga", "gi", "gu", "ge", "go", "geu", "geo", "gya", "gyu", "gyeo", "gyo", "gye", "gwa", "geui", "gwi", "gwe", "gweo", "gga", "ggi", "ggu", "gge", "ggo", "ggeu", "ggeo", "ggya", "ggyu", "ggyeo", "ggyo", "ggye", "ggwa", "ggeui", "ggwi", "ggwe", "ggweo", "na", "ni", "nu", "ne", "no", "neu", "neo", "nya", "nyu", "nyeo", "nyo", "nye", "nwa", "neui", "nwi", "nwe", "nweo", "da", "di", "du", "de", "do", "deu", "deo", "dya", "dyu", "dyeo", "dyo", "dye", "dwa", "deui", "dwi", "dwe", "dweo", "dda", "ddi", "ddu", "dde", "ddo", "ddeu", "ddeo", "ddya", "ddyu", "ddyeo", "ddyo", "ddye", "ddwa", "ddeui", "ddwi", "ddwe", "ddweo", "ra", "ri", "ru", "re", "ro", "reu", "reo", "rya", "ryu", "ryeo", "ryo", "rye", "rwa", "reui", "rwi", "rwe", "rweo", "ma", "mi", "mu", "me", "mo", "meu", "meo", "mya", "myu", "myeo", "myo", "mye", "mwa", "meui", "mwi", "mwe", "mweo", "ba", "bi", "bu", "be", "bo", "beu", "beo", "bya", "byu", "byeo", "byo", "bye", "bwa", "beui", "bwi", "bwe", "bweo", "bba", "bbi", "bbu", "bbe", "bbo", "bbeu", "bbeo", "bbya", "bbyu", "bbyeo", "bbyo", "bbye", "bbwa", "bbeui", "bbwi", "bbwe", "bbweo", "sa", "si", "su", "se", "so", "seu", "seo", "sya", "syu", "syeo", "syo", "sye", "swa", "seui", "swi", "swe", "sweo", "ssa", "ssi", "ssu", "sse", "sso", "sseu", "sseo", "ssya", "ssyu", "ssyeo", "ssyo", "ssye", "sswa", "sseui", "sswi", "sswe", "ssweo", "aR", "iR", "uR", "eR", "oR", "euR", "eoR", "ya", "yu", "yeo", "yo", "ye", "wa", "wi", "we", "weo", "eui", "ja", "ji", "ju", "je", "jo", "jeu", "jeo", "jya", "jyu", "jyeo", "jyo", "jye", "jwa", "jeui", "jwi", "jwe", "jweo", "jja", "jji", "jju", "jje", "jjo", "jjeu", "jjeo", "jjya", "jjyu", "jjyeo", "jjyo", "jjye", "jjwa", "jjeui", "jjwi", "jjwe", "jjweo", "cha", "chi", "chu", "che", "cho", "cheu", "cheo", "chya", "chyu", "chyeo", "chyo", "chye", "chwa", "cheui", "chwi", "chwe", "chweo", "ka", "ki", "ku", "ke", "ko", "keu", "keo", "kya", "kyu", "kyeo", "kyo", "kye", "kwa", "keui", "kwi", "kwe", "kweo", "ta", "ti", "tu", "te", "to", "teu", "teo", "tya", "tyu", "tyeo", "tyo", "tye", "twa", "teui", "twi", "twe", "tweo", "pa", "pi", "pu", "pe", "po", "peu", "peo", "pya", "pyu", "pyeo", "pyo", "pye", "pwa", "peui", "pwi", "pwe", "pweo", "ha", "hi", "hu", "he", "ho", "heu", "heo", "hya", "hyu", "hyeo", "hyo", "hye", "hwa", "heui", "hwi", "hwe", "hweo", "nR", "mR", "ngR", "lR", "br"];
-const VC_VOWELS = ["a","i","u","e","o","eo","eu","ya","ye","yeo","yo","yu","wa","we","weo","wi","eui"];
-const VC_CODAS = ["k","n","t","l","m","p","ng","h"];
-const VC_LIST_DEFAULT = [];
-for(const _v of VC_VOWELS){ for(const _c of VC_CODAS){ VC_LIST_DEFAULT.push(_v+" "+_c); } }
 var $t = 44100;
-var ty = {"あ":[750,1185,2900],"い":[283,2241,3200],"う":[312,766,2300],"え":[512,1925,2900],"お":[436,740,2400],"ん":[300,800,2200],"아":[750,1185,2900],"이":[283,2241,3200],"우":[312,766,2300],"오":[436,740,2400],"애":[528,1931,2800],"어":[515,980,2400],"에":[512,1925,2900],"으":[362,1164,2400],"ㅏ":[750,1185,2900],"ㅣ":[283,2241,3200],"ㅜ":[312,766,2300],"ㅗ":[436,740,2400],"ㅐ":[528,1931,2800],"ㅓ":[515,980,2400],"ㅔ":[512,1925,2900],"ㅡ":[362,1164,2400],"ㅑ":[750,1185,2900],"ㅕ":[515,980,2400],"ㅛ":[436,740,2400],"ㅠ":[312,766,2300],"ㅖ":[512,1925,2900],"ㅘ":[750,1185,2900],"ㅙ":[528,1931,2800],"ㅚ":[512,1925,2900],"ㅝ":[515,980,2400],"ㅞ":[512,1925,2900],"ㅟ":[283,2241,3200],"ㅢ":[362,1164,2400]};
-const JAMO_TO_SYLLABLE={"ㅏ":"아","ㅐ":"애","ㅑ":"야","ㅒ":"얘","ㅓ":"어","ㅔ":"에","ㅕ":"여","ㅖ":"예","ㅗ":"오","ㅘ":"와","ㅙ":"왜","ㅚ":"외","ㅛ":"요","ㅜ":"우","ㅝ":"워","ㅞ":"웨","ㅟ":"위","ㅠ":"유","ㅡ":"으","ㅢ":"의","ㅣ":"이"};
+var ty = {"あ":[750,1185,2900],"い":[283,2241,3200],"う":[312,766,2300],"え":[512,1925,2900],"お":[436,740,2400],"ん":[300,800,2200],"아":[750,1185,2900],"이":[283,2241,3200],"우":[312,766,2300],"오":[436,740,2400],"애":[528,1931,2800],"어":[515,980,2400],"에":[512,1925,2900],"으":[362,1164,2400]};
 function ry(e,n,t=1){let r=ty[e]||[800,1200,2500],l=Math.max(0,n-200)*0.25;if(t===0)return[(r[0]+l)*1.25,(r[1]+l)*1.25];return[(r[0]+l)*1.25,(r[1]+l)*1.25,(r[2]+l)*1.25*t]}
 function qi(e,n,t,r=1,l=$t){let u=Math.floor(l*r),o=ry(e,n,t),i=new Float64Array(u),s=0,f=Math.floor(l/2/n),y=o.length>2,p=0.55+0.45*(Math.min(Math.max(t,0),1.5)/1.5);for(let g=0;g<u;g++){let S=g/l,k=0;for(let M=1;M<Math.min(f,30);M++){let d=n*M,a=0;for(let c=0;c<o.length;c++){let v=o[c];if(c<2)a+=Math.exp(-((d-v)*(d-v))/50000);else a+=0.42*Math.exp(-((d-v)*(d-v))/200000)}if(y){let c=Math.max(0,d-3600),v=1/(1+Math.pow(c/4500,2)*p);a*=Math.max(0.12,v)}k+=a/Math.pow(M,0.9)*Math.sin(2*Math.PI*d*S)}if(i[g]=k,Math.abs(k)>s)s=Math.abs(k)}return{sig:i,peak:s,n:u}}
 function ly(e,n,t=1,r=1){let{sig:l,peak:u,n:o}=qi(e,n,r,t,$t),i=new Int16Array(o);if(u>0)for(let s=0;s<o;s++)i[s]=Math.trunc(l[s]/u*0.7*32767);return i}
-function ed(e,n){let t=new Int16Array(e.length+n.length);t.set(e,0);t.set(n,e.length);return t}
-function Zi(e){let n=e.length,t=new ArrayBuffer(44+n*2),r=new DataView(t),l=(u,o)=>{for(let i=0;i<o.length;i++)r.setUint8(u+i,o.charCodeAt(i))};l(0,"RIFF"),r.setUint32(4,36+n*2,!0),l(8,"WAVE"),l(12,"fmt "),r.setUint32(16,16,!0),r.setUint16(20,1,!0),r.setUint16(22,1,!0),r.setUint32(24,$t,!0),r.setUint32(28,$t*2,!0),r.setUint16(32,2,!0),r.setUint16(34,16,!0),l(36,"data"),r.setUint32(40,n*2,!0);for(let u=0;u<n;u++)r.setInt16(44+u*2,e[u],!0);return new Uint8Array(t)}
+function ed(e,n){
+  if(e.length===0) return n.slice();
+  if(n.length===0) return e.slice();
+  let eEnd=e.length;
+  let bestE=eEnd, bestVal=Math.abs(e[eEnd-1]);
+  for(let i=0;i<Math.min(200,e.length);i++){ let v=Math.abs(e[eEnd-1-i]); if(v<bestVal){ bestVal=v; bestE=eEnd-1-i; } }
+  let bestN=0, bestValN=Math.abs(n[0]);
+  for(let i=0;i<Math.min(200,n.length);i++){ let v=Math.abs(n[i]); if(v<bestValN){ bestValN=v; bestN=i; } }
+  let fade=Math.min(220, Math.floor(bestE/2), Math.floor((n.length-bestN)/2));
+  if(fade<8) fade=0;
+  if(fade===0){ let out=new Int16Array(bestE+(n.length-bestN)); out.set(e.subarray(0,bestE),0); out.set(n.subarray(bestN),bestE); return out; }
+  let outLen=bestE-fade+(n.length-bestN);
+  let out=new Int16Array(outLen);
+  out.set(e.subarray(0,bestE-fade),0);
+  for(let i=0;i<fade;i++){ let a=e[bestE-fade+i]/32768; let b=n[bestN+i]/32768; let w=i/fade; let mix=a*Math.cos(w*Math.PI/2)+b*Math.sin(w*Math.PI/2); out[bestE-fade+i]=Math.max(-32767,Math.min(32767,Math.trunc(mix*32767))); }
+  out.set(n.subarray(bestN+fade),bestE);
+  return out;
+}
+function fadeEdges(seg,len=128){ let L=Math.min(len,Math.floor(seg.length/4)); for(let i=0;i<L;i++){ let w=i/L; seg[i]=Math.trunc(seg[i]*w); seg[seg.length-1-i]=Math.trunc(seg[seg.length-1-i]*w); } return seg; }
+function Zi(e){ e=fadeEdges(e.slice(),128); let n=e.length,t=new ArrayBuffer(44+n*2),r=new DataView(t),l=(u,o)=>{for(let i=0;i<o.length;i++)r.setUint8(u+i,o.charCodeAt(i))};l(0,"RIFF"),r.setUint32(4,36+n*2,!0),l(8,"WAVE"),l(12,"fmt "),r.setUint32(16,16,!0),r.setUint16(20,1,!0),r.setUint16(22,1,!0),r.setUint32(24,$t,!0),r.setUint32(28,$t*2,!0),r.setUint16(32,2,!0),r.setUint16(34,16,!0),l(36,"data"),r.setUint32(40,n*2,!0);for(let u=0;u<n;u++)r.setInt16(44+u*2,e[u],!0);return new Uint8Array(t)}
 function ji(e){let n=4294967295; const uy=(()=>{let e=new Uint32Array(256);for(let n=0;n<256;n++){let t=n;for(let r=0;r<8;r++)t=t&1?3988292384^t>>>1:t>>>1;e[n]=t>>>0}return e})(); for(let t=0;t<e.length;t++)n=uy[(n^e[t])&255]^n>>>8; return (n^4294967295)>>>0}
 function py(e,n){let r=e.length-44>>1,l=new DataView(e.buffer,e.byteOffset,e.byteLength),u=Math.max(1,Math.ceil(r/256)),o=new Uint8Array(40+u*16),i=new DataView(o.buffer);"FREQ0003".split("").forEach((s,f)=>o[f]=s.charCodeAt(0)),i.setInt32(8,256,!0),i.setFloat64(12,n,!0),i.setInt32(36,u,!0);for(let s=0;s<u;s++){let f=s*256,y=Math.min(r,f+256),m=0;for(let p=f;p<y;p++){let g=Math.abs(l.getInt16(44+p*2,!0)/32768);if(g>m)m=g}i.setFloat64(40+s*16,n,!0),i.setFloat64(48+s*16,m,!0)}return o}
 async function iy(e){let n=new TextEncoder,t=new Date,r=t.getHours()<<11|t.getMinutes()<<5|t.getSeconds()>>1,l=t.getFullYear()-1980<<9|t.getMonth()+1<<5|t.getDate(),u=[],o=[],i=0;for(let[y,m]of e){let p=n.encode(y),g=ji(m),S=null; try{let r2=new Blob([m]).stream().pipeThrough(new window.CompressionStream("deflate-raw")); S=new Uint8Array(await new Response(r2).arrayBuffer());}catch{} let k=S&&S.length<m.length, M=k?S:m, d=k?8:0, a=new DataView(new ArrayBuffer(30)); a.setUint32(0,67324752,!0);a.setUint16(4,20,!0);a.setUint16(6,2048,!0);a.setUint16(8,d,!0);a.setUint16(10,r,!0);a.setUint16(12,l,!0);a.setUint32(14,g,!0);a.setUint32(18,M.length,!0);a.setUint32(22,m.length,!0);a.setUint16(26,p.length,!0);a.setUint16(28,0,!0);u.push(new Uint8Array(a.buffer),p,M);let c=new DataView(new ArrayBuffer(46));c.setUint32(0,33639248,!0);c.setUint16(4,20,!0);c.setUint16(6,20,!0);c.setUint16(8,2048,!0);c.setUint16(10,d,!0);c.setUint16(12,r,!0);c.setUint16(14,l,!0);c.setUint32(16,g,!0);c.setUint32(20,M.length,!0);c.setUint32(24,m.length,!0);c.setUint16(28,p.length,!0);c.setUint32(42,i,!0);o.push(new Uint8Array(c.buffer),p);i+=30+p.length+M.length}let s=o.reduce((y,m)=>y+m.length,0),f=new DataView(new ArrayBuffer(22));f.setUint32(0,101010256,!0);f.setUint16(8,e.size,!0);f.setUint16(10,e.size,!0);f.setUint32(12,s,!0);f.setUint32(16,i,!0);return new Blob([...u,...o,new Uint8Array(f.buffer)],{type:"application/zip"})}
@@ -226,7 +233,6 @@ let height=242, f3=1;
 document.getElementById('slider-height').addEventListener('input', e=>{height=+e.target.value; document.getElementById('height-val').textContent=height;});
 document.getElementById('slider-f3').addEventListener('input', e=>{f3=+e.target.value; document.getElementById('f3-label').textContent = f3===0?"声質変更オフ": f3<=0.75?"おっさん声": f3>=1.25?"アニメ声":"ふつう";});
 document.getElementById('cvlist').value = CV_LIST_DEFAULT.join('\n');
-document.getElementById('vclist').value = VC_LIST_DEFAULT.join('\n');
 function toggleTheme(){ const app=document.getElementById('app'); const cur=app.getAttribute('data-theme'); app.setAttribute('data-theme', cur==="dark"?"light":"dark"); }
 async function playSample(ch){
   const h=height;
@@ -310,7 +316,7 @@ async function generate(){
           let vSig=null;
           if(base==="eu") vSig=A["으"];
           else if(base==="eo") vSig=A["어"];
-          else if(VOWEL_ROMAJI[base]){ const _s=JAMO_TO_SYLLABLE[VOWEL_ROMAJI[base]]||VOWEL_ROMAJI[base]; vSig=A[_s]||ly(_s,h,1,f3); }
+          else if(VOWEL_ROMAJI[base]) vSig=A[VOWEL_ROMAJI[base]]||ly(VOWEL_ROMAJI[base],h,1,f3);
           else vSig=A["아"];
           const rest=new Int16Array(Math.floor($t*0.15));
           seg=ed(vSig, rest);
@@ -319,7 +325,7 @@ async function generate(){
         }
       } else if(VOWEL_ROMAJI[tok]){
         const jung=VOWEL_ROMAJI[tok];
-        seg=A[JAMO_TO_SYLLABLE[jung]||jung]||ly(JAMO_TO_SYLLABLE[jung]||jung,h,1,f3);
+        seg=A[jung]||ly(jung,h,1,f3);
         hang=jung;
         // 単独母音のハングル音節に変換: ya->야, yu->유, wa->와 等
         hang=romajiToHangul(tok);
@@ -331,7 +337,7 @@ async function generate(){
         if(!onset){ seg=A["아"]; hang=tok; }
         else {
           const jung=VOWEL_ROMAJI[rest];
-          const vSig=A[JAMO_TO_SYLLABLE[jung]||jung]||ly(JAMO_TO_SYLLABLE[jung]||jung,h,1,f3);
+          const vSig=A[jung]||ly(jung,h,1,f3);
           const choJamo=ONSET_ROMAJI[onset];
           // ★ FIXED: romForOnset を KCho 引きに統一。以前は gg->ga, dd->da, bb->ba, jj->za で逆転していた
           const choEntry=KCho.find(([j])=>j===choJamo);
@@ -361,41 +367,6 @@ async function generate(){
       const pct=Math.floor((idx+1)/cvTokens.length*100);
       document.getElementById('bar').style.width=pct+"%";
       document.getElementById('status').textContent=`生成中… CV ${idx+1} / ${cvTokens.length} (${pct}%)`;
-      if(idx%10===0) await new Promise(r=>setTimeout(r,0));
-    }
-    // ===== VC生成 (パッチム) =====
-    const CODA_JAMO = {"k":"ㄱ","n":"ㄴ","t":"ㄷ","l":"ㄹ","m":"ㅁ","p":"ㅂ","ng":"ㅇ","h":"ㅎ"};
-    const vcText = document.getElementById('vclist').value;
-    const vcTokens = vcText.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-    for(let idx=0; idx<vcTokens.length; idx++){
-      const tok = vcTokens[idx];
-      const parts = tok.split(/\s+/);
-      if(parts.length!==2) continue;
-      const [vRom, cRom] = parts;
-      const jung = VOWEL_ROMAJI[vRom];
-      const codaJamo = CODA_JAMO[cRom];
-      if(!jung || !codaJamo) continue;
-      const vSyll = JAMO_TO_SYLLABLE[jung] || jung;
-      const vSigFull = A[vSyll] || ly(vSyll,h,1,f3);
-      const vPart = vSigFull.subarray(0, Math.floor($t*0.3));
-      let cTail = synthCodaFallback(codaJamo);
-      if(cTail.length > Math.floor($t*0.12)) cTail = cTail.subarray(0, Math.floor($t*0.12));
-      const segVC = ed(vPart, cTail);
-      const vcCode = 0xAC00 + 11*588 + VOWEL_IDX[jung]*28 + JONG_IDX[codaJamo];
-      const vcHang = String.fromCharCode(vcCode);
-      const wavNameVC = vcHang + ".wav";
-      put(wavNameVC, Zi(segVC));
-      const durMsVC = Math.floor(segVC.length/$t*1000);
-      const preVC = Math.min(30, Math.floor(durMsVC*0.3));
-      const aliasVC = vRom + " " + cRom;
-      const aliasVC_nospace = vRom + cRom;
-      otoLines.push(`${wavNameVC}=${aliasVC},0,${durMsVC},0,${preVC},15`);
-      otoLines.push(`${wavNameVC}=${vcHang},0,${durMsVC},0,${preVC},15`);
-      otoLines.push(`${wavNameVC}=_${aliasVC},0,${durMsVC},0,${preVC},15`);
-      otoLines.push(`${wavNameVC}=_${vcHang},0,${durMsVC},0,${preVC},15`);
-      otoLines.push(`${wavNameVC}=${aliasVC_nospace},0,${durMsVC},0,${preVC},15`);
-      const pctVC = Math.floor((idx+1)/vcTokens.length*100);
-      document.getElementById('status').textContent=`生成中… VC ${idx+1} / ${vcTokens.length} (${pctVC}%)`;
       if(idx%10===0) await new Promise(r=>setTimeout(r,0));
     }
     for(let L of Object.keys(Ko)){ otoLines.push(`${L}.wav=${L},0,100,0,100,50`); }
