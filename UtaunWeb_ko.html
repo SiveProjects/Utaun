@@ -111,7 +111,8 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 
 const CV_LIST_DEFAULT = ["ga", "gi", "gu", "ge", "go", "geu", "geo", "gya", "gyu", "gyeo", "gyo", "gye", "gwa", "geui", "gwi", "gwe", "gweo", "gga", "ggi", "ggu", "gge", "ggo", "ggeu", "ggeo", "ggya", "ggyu", "ggyeo", "ggyo", "ggye", "ggwa", "ggeui", "ggwi", "ggwe", "ggweo", "na", "ni", "nu", "ne", "no", "neu", "neo", "nya", "nyu", "nyeo", "nyo", "nye", "nwa", "neui", "nwi", "nwe", "nweo", "da", "di", "du", "de", "do", "deu", "deo", "dya", "dyu", "dyeo", "dyo", "dye", "dwa", "deui", "dwi", "dwe", "dweo", "dda", "ddi", "ddu", "dde", "ddo", "ddeu", "ddeo", "ddya", "ddyu", "ddyeo", "ddyo", "ddye", "ddwa", "ddeui", "ddwi", "ddwe", "ddweo", "ra", "ri", "ru", "re", "ro", "reu", "reo", "rya", "ryu", "ryeo", "ryo", "rye", "rwa", "reui", "rwi", "rwe", "rweo", "ma", "mi", "mu", "me", "mo", "meu", "meo", "mya", "myu", "myeo", "myo", "mye", "mwa", "meui", "mwi", "mwe", "mweo", "ba", "bi", "bu", "be", "bo", "beu", "beo", "bya", "byu", "byeo", "byo", "bye", "bwa", "beui", "bwi", "bwe", "bweo", "bba", "bbi", "bbu", "bbe", "bbo", "bbeu", "bbeo", "bbya", "bbyu", "bbyeo", "bbyo", "bbye", "bbwa", "bbeui", "bbwi", "bbwe", "bbweo", "sa", "si", "su", "se", "so", "seu", "seo", "sya", "syu", "syeo", "syo", "sye", "swa", "seui", "swi", "swe", "sweo", "ssa", "ssi", "ssu", "sse", "sso", "sseu", "sseo", "ssya", "ssyu", "ssyeo", "ssyo", "ssye", "sswa", "sseui", "sswi", "sswe", "ssweo", "aR", "iR", "uR", "eR", "oR", "euR", "eoR", "ya", "yu", "yeo", "yo", "ye", "wa", "wi", "we", "weo", "eui", "ja", "ji", "ju", "je", "jo", "jeu", "jeo", "jya", "jyu", "jyeo", "jyo", "jye", "jwa", "jeui", "jwi", "jwe", "jweo", "jja", "jji", "jju", "jje", "jjo", "jjeu", "jjeo", "jjya", "jjyu", "jjyeo", "jjyo", "jjye", "jjwa", "jjeui", "jjwi", "jjwe", "jjweo", "cha", "chi", "chu", "che", "cho", "cheu", "cheo", "chya", "chyu", "chyeo", "chyo", "chye", "chwa", "cheui", "chwi", "chwe", "chweo", "ka", "ki", "ku", "ke", "ko", "keu", "keo", "kya", "kyu", "kyeo", "kyo", "kye", "kwa", "keui", "kwi", "kwe", "kweo", "ta", "ti", "tu", "te", "to", "teu", "teo", "tya", "tyu", "tyeo", "tyo", "tye", "twa", "teui", "twi", "twe", "tweo", "pa", "pi", "pu", "pe", "po", "peu", "peo", "pya", "pyu", "pyeo", "pyo", "pye", "pwa", "peui", "pwi", "pwe", "pweo", "ha", "hi", "hu", "he", "ho", "heu", "heo", "hya", "hyu", "hyeo", "hyo", "hye", "hwa", "heui", "hwi", "hwe", "hweo", "nR", "mR", "ngR", "lR", "br"];
 var $t = 44100;
-var ty = {"あ":[750,1185,2900],"い":[283,2241,3200],"う":[312,766,2300],"え":[512,1925,2900],"お":[436,740,2400],"ん":[300,800,2200],"아":[750,1185,2900],"이":[283,2241,3200],"우":[312,766,2300],"오":[436,740,2400],"애":[528,1931,2800],"어":[515,980,2400],"에":[512,1925,2900],"으":[362,1164,2400]};
+var ty = {"あ":[750,1185,2900],"い":[283,2241,3200],"う":[312,766,2300],"え":[512,1925,2900],"お":[436,740,2400],"ん":[300,800,2200],"아":[750,1185,2900],"이":[283,2241,3200],"우":[312,766,2300],"오":[436,740,2400],"애":[528,1931,2800],"어":[515,980,2400],"에":[512,1925,2900],"으":[362,1164,2400],"ㅏ":[750,1185,2900],"ㅣ":[283,2241,3200],"ㅜ":[312,766,2300],"ㅗ":[436,740,2400],"ㅐ":[528,1931,2800],"ㅓ":[515,980,2400],"ㅔ":[512,1925,2900],"ㅡ":[362,1164,2400],"ㅑ":[750,1185,2900],"ㅕ":[515,980,2400],"ㅛ":[436,740,2400],"ㅠ":[312,766,2300],"ㅖ":[512,1925,2900],"ㅘ":[750,1185,2900],"ㅙ":[528,1931,2800],"ㅚ":[512,1925,2900],"ㅝ":[515,980,2400],"ㅞ":[512,1925,2900],"ㅟ":[283,2241,3200],"ㅢ":[362,1164,2400]};
+const JAMO_TO_SYLLABLE={"ㅏ":"아","ㅐ":"애","ㅑ":"야","ㅒ":"얘","ㅓ":"어","ㅔ":"에","ㅕ":"여","ㅖ":"예","ㅗ":"오","ㅘ":"와","ㅙ":"왜","ㅚ":"외","ㅛ":"요","ㅜ":"우","ㅝ":"워","ㅞ":"웨","ㅟ":"위","ㅠ":"유","ㅡ":"으","ㅢ":"의","ㅣ":"이"};
 function ry(e,n,t=1){let r=ty[e]||[800,1200,2500],l=Math.max(0,n-200)*0.25;if(t===0)return[(r[0]+l)*1.25,(r[1]+l)*1.25];return[(r[0]+l)*1.25,(r[1]+l)*1.25,(r[2]+l)*1.25*t]}
 function qi(e,n,t,r=1,l=$t){let u=Math.floor(l*r),o=ry(e,n,t),i=new Float64Array(u),s=0,f=Math.floor(l/2/n),y=o.length>2,p=0.55+0.45*(Math.min(Math.max(t,0),1.5)/1.5);for(let g=0;g<u;g++){let S=g/l,k=0;for(let M=1;M<Math.min(f,30);M++){let d=n*M,a=0;for(let c=0;c<o.length;c++){let v=o[c];if(c<2)a+=Math.exp(-((d-v)*(d-v))/50000);else a+=0.42*Math.exp(-((d-v)*(d-v))/200000)}if(y){let c=Math.max(0,d-3600),v=1/(1+Math.pow(c/4500,2)*p);a*=Math.max(0.12,v)}k+=a/Math.pow(M,0.9)*Math.sin(2*Math.PI*d*S)}if(i[g]=k,Math.abs(k)>s)s=Math.abs(k)}return{sig:i,peak:s,n:u}}
 function ly(e,n,t=1,r=1){let{sig:l,peak:u,n:o}=qi(e,n,r,t,$t),i=new Int16Array(o);if(u>0)for(let s=0;s<o;s++)i[s]=Math.trunc(l[s]/u*0.7*32767);return i}
@@ -298,7 +299,7 @@ async function generate(){
           let vSig=null;
           if(base==="eu") vSig=A["으"];
           else if(base==="eo") vSig=A["어"];
-          else if(VOWEL_ROMAJI[base]) vSig=A[VOWEL_ROMAJI[base]]||ly(VOWEL_ROMAJI[base],h,1,f3);
+          else if(VOWEL_ROMAJI[base]){ const _s=JAMO_TO_SYLLABLE[VOWEL_ROMAJI[base]]||VOWEL_ROMAJI[base]; vSig=A[_s]||ly(_s,h,1,f3); }
           else vSig=A["아"];
           const rest=new Int16Array(Math.floor($t*0.15));
           seg=ed(vSig, rest);
@@ -307,7 +308,7 @@ async function generate(){
         }
       } else if(VOWEL_ROMAJI[tok]){
         const jung=VOWEL_ROMAJI[tok];
-        seg=A[jung]||ly(jung,h,1,f3);
+        seg=A[JAMO_TO_SYLLABLE[jung]||jung]||ly(JAMO_TO_SYLLABLE[jung]||jung,h,1,f3);
         hang=jung;
         // 単独母音のハングル音節に変換: ya->야, yu->유, wa->와 等
         hang=romajiToHangul(tok);
@@ -319,7 +320,7 @@ async function generate(){
         if(!onset){ seg=A["아"]; hang=tok; }
         else {
           const jung=VOWEL_ROMAJI[rest];
-          const vSig=A[jung]||ly(jung,h,1,f3);
+          const vSig=A[JAMO_TO_SYLLABLE[jung]||jung]||ly(JAMO_TO_SYLLABLE[jung]||jung,h,1,f3);
           const choJamo=ONSET_ROMAJI[onset];
           // ★ FIXED: romForOnset を KCho 引きに統一。以前は gg->ga, dd->da, bb->ba, jj->za で逆転していた
           const choEntry=KCho.find(([j])=>j===choJamo);
