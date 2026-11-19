@@ -74,11 +74,26 @@ textarea.reclist{width:100%;height:160px;border:1px solid var(--border);border-r
 <div class="mode">
 <label><input type="radio" name="mode" value="malcha" checked=""><span>Malcha CVVC<br><small>リスト通り 177行</small></span></label>
 <label><input type="radio" name="mode" value="full"><span>フル韓国語<br><small>11172 + CV/VC</small></span></label>
+<label><input type="radio" name="mode" value="cv"><span>CV<br><small>フォロワー様リスト 328音</small></span></label>
+</div>
+<div style="margin-top:10px">
+<div style="font-size:13px;font-weight:700;margin-bottom:6px">CV / VC の出し方</div>
+<div class="mode">
+<label><input type="radio" name="cvvc" value="together"><span>CVVC まとめる<br><small>1行=1wav・UTAU用</small></span></label>
+<label><input type="radio" name="cvvc" value="separate" checked=""><span>CV / VC 分ける<br><small>UTAlet用・推奨</small></span></label>
+</div>
+<p style="font-size:12px;color:var(--muted)">UTAletは CVとVCが一緒のwavだと反応しないので、分ける方がいい。分けるを選ぶと 1行から <code>line001_CV.wav</code> と <code>line001_VC.wav</code> の2つが出る。</p>
 </div>
 <p>Malchaモードは下のレコリスト1行 = 1wav。oto.iniはリストのエイリアス全部に合わせる。1wavに複数エイリアスが入るのがCVVC（連続音）。<br>フルモードは元ファイルと同じ、初声19 × 中声21 × 終声28 の全組み合わせ。</p>
 </div>
 
-<div class="card">
+<div class="card" id="cv-card" style="display: block;">
+<h2>CV レコリスト（フォロワー様・328音）</h2>
+<p>CVにするならこっち。1行 = 1音 = 1wav。CVだけ。</p>
+<textarea class="reclist" id="cvlist" style="height:160px"></textarea>
+<div style="font-size:12px;margin-top:6px">例：<code>ga → 가</code>、<code>gga → 까</code>、<code>geu → 그</code>、<code>geo → 거</code>、<code>aR → 아 + 休止</code>、<code>nR → ㄴ + 休止</code>、<code>br → ブレス</code></div>
+</div>
+<div class="card" style="display: none;">
 <h2>Malcha レコリスト（177行）</h2>
 <p>このまま使う。自分のリストに書き換えてもOK。</p>
 <textarea class="reclist" id="reclist"></textarea>
@@ -107,7 +122,7 @@ textarea.reclist{width:100%;height:160px;border:1px solid var(--border);border-r
 
 <div class="card">
 <h2>oto.ini の合わせ方</h2>
-<p>元ファイルは <code>wav = エイリアス1個</code> だった。Malcha版は <code>1wav = エイリアス複数</code> にした。</p>
+<p>UTAlet用は <code>CVとVCでwavを分ける</code>。UTAU用は <code>1wav = エイリアス複数</code> のCVVCのまま。</p><p>分けるモード：<code>line001_CV.wav = ka / 카</code>、<code>line001_VC.wav = a ky / 악 / _a ky</code> みたいに別ファイルになる。UTAletが CVとVCを別々に拾える。</p>
 <p><code>line001.wav=_ka,0,30,0,30,15</code><br><code>line001.wav=_카,0,30,0,30,15</code><br><code>line001.wav=ka,0,30,0,30,15</code><br><code>line001.wav=카,0,30,0,30,15</code><br>ローマ字でもハングルでも打てる。UTAUで <code>_카</code> と <code>카</code> は同じwavの違う位置を指す。</p>
 <p>変換：<code>ka→카</code> ㅋ+ㅏ、<code>ga→가</code> ㄱ+ㅏ、<code>kka→까</code> ㄲ+ㅏ、<code>in→인</code> ㅣ+ㄴ、<code>um→움</code> ㅜ+ㅁ、<code>ong→옹</code> ㅗ+ㅇ、<code>il→일</code> ㅣ+ㄹ。R=休止、br=ブレス、ng=鼻音。</p>
 </div>
@@ -308,6 +323,8 @@ const RECLIST_DEFAULT = [
   "_a'kssa'_'a'pssa"
 ];
 document.getElementById('reclist').value = RECLIST_DEFAULT.join('\n');
+const CV_LIST_DEFAULT = ["ga", "gi", "gu", "ge", "go", "geu", "geo", "gya", "gyu", "gyeo", "gyo", "gye", "gwa", "geui", "gwi", "gwe", "gweo", "gga", "ggi", "ggu", "gge", "ggo", "ggeu", "ggeo", "ggya", "ggyu", "ggyeo", "ggyo", "ggye", "ggwa", "ggeui", "ggwi", "ggwe", "ggweo", "na", "ni", "nu", "ne", "no", "neu", "neo", "nya", "nyu", "nyeo", "nyo", "nye", "nwa", "neui", "nwi", "nwe", "nweo", "da", "di", "du", "de", "do", "deu", "deo", "dya", "dyu", "dyeo", "dyo", "dye", "dwa", "deui", "dwi", "dwe", "dweo", "dda", "ddi", "ddu", "dde", "ddo", "ddeu", "ddeo", "ddya", "ddyu", "ddyeo", "ddyo", "ddye", "ddwa", "ddeui", "ddwi", "ddwe", "ddweo", "ra", "ri", "ru", "re", "ro", "reu", "reo", "rya", "ryu", "ryeo", "ryo", "rye", "rwa", "reui", "rwi", "rwe", "rweo", "ma", "mi", "mu", "me", "mo", "meu", "meo", "mya", "myu", "myeo", "myo", "mye", "mwa", "meui", "mwi", "mwe", "mweo", "ba", "bi", "bu", "be", "bo", "beu", "beo", "bya", "byu", "byeo", "byo", "bye", "bwa", "beui", "bwi", "bwe", "bweo", "bba", "bbi", "bbu", "bbe", "bbo", "bbeu", "bbeo", "bbya", "bbyu", "bbyeo", "bbyo", "bbye", "bbwa", "bbeui", "bbwi", "bbwe", "bbweo", "sa", "si", "su", "se", "so", "seu", "seo", "sya", "syu", "syeo", "syo", "sye", "swa", "seui", "swi", "swe", "sweo", "ssa", "ssi", "ssu", "sse", "sso", "sseu", "sseo", "ssya", "ssyu", "ssyeo", "ssyo", "ssye", "sswa", "sseui", "sswi", "sswe", "ssweo", "aR", "iR", "uR", "eR", "oR", "euR", "eoR", "ya", "yu", "yeo", "yo", "ye", "wa", "wi", "we", "weo", "eui", "ja", "ji", "ju", "je", "jo", "jeu", "jeo", "jya", "jyu", "jyeo", "jyo", "jye", "jwa", "jeui", "jwi", "jwe", "jweo", "jja", "jji", "jju", "jje", "jjo", "jjeu", "jjeo", "jjya", "jjyu", "jjyeo", "jjyo", "jjye", "jjwa", "jjeui", "jjwi", "jjwe", "jjweo", "cha", "chi", "chu", "che", "cho", "cheu", "cheo", "chya", "chyu", "chyeo", "chyo", "chye", "chwa", "cheui", "chwi", "chwe", "chweo", "ka", "ki", "ku", "ke", "ko", "keu", "keo", "kya", "kyu", "kyeo", "kyo", "kye", "kwa", "keui", "kwi", "kwe", "kweo", "ta", "ti", "tu", "te", "to", "teu", "teo", "tya", "tyu", "tyeo", "tyo", "tye", "twa", "teui", "twi", "twe", "tweo", "pa", "pi", "pu", "pe", "po", "peu", "peo", "pya", "pyu", "pyeo", "pyo", "pye", "pwa", "peui", "pwi", "pwe", "pweo", "ha", "hi", "hu", "he", "ho", "heu", "heo", "hya", "hyu", "hyeo", "hyo", "hye", "hwa", "heui", "hwi", "hwe", "hweo", "nR", "mR", "ngR", "lR", "br"];
+
 
 // ===== 元ファイル UtaunWeb_ko の合成部分をそのまま =====
 var $t = 44100;
@@ -389,7 +406,7 @@ async function hy(e,n,t){
 
 // ===== Malcha 用の変換 =====
 const VOWEL_ROMAJI={"a":"ㅏ","i":"ㅣ","u":"ㅜ","e":"ㅔ","o":"ㅗ","eo":"ㅓ","eu":"ㅡ","eui":"ㅢ","ya":"ㅑ","ye":"ㅖ","yeo":"ㅕ","yo":"ㅛ","yu":"ㅠ","wa":"ㅘ","we":"ㅞ","weo":"ㅝ","wi":"ㅟ"};
-const ONSET_ROMAJI={"k":"ㅋ","kk":"ㄲ","g":"ㄱ","t":"ㅌ","tt":"ㄸ","d":"ㄷ","p":"ㅍ","pp":"ㅃ","b":"ㅂ","s":"ㅅ","ss":"ㅆ","ch":"ㅊ","j":"ㅈ","jj":"ㅉ","h":"ㅎ","n":"ㄴ","m":"ㅁ","r":"ㄹ","l":"ㄹ","ng":"ㅇ","":"ㅇ","kss":"ㅆ","pss":"ㅆ"};
+const ONSET_ROMAJI={"k":"ㅋ","kk":"ㄲ","gg":"ㄲ","g":"ㄱ","t":"ㅌ","tt":"ㄸ","dd":"ㄸ","d":"ㄷ","p":"ㅍ","pp":"ㅃ","bb":"ㅃ","b":"ㅂ","s":"ㅅ","ss":"ㅆ","ch":"ㅊ","j":"ㅈ","jj":"ㅉ","h":"ㅎ","n":"ㄴ","m":"ㅁ","r":"ㄹ","l":"ㄹ","ng":"ㅇ","":"ㅇ","kss":"ㅆ","pss":"ㅆ","kka":"ㄲ","gga":"ㄲ","tta":"ㄸ","dda":"ㄸ","ppa":"ㅃ","bba":"ㅃ"};
 const ONSET_IDX={"ㄱ":0,"ㄲ":1,"ㄴ":2,"ㄷ":3,"ㄸ":4,"ㄹ":5,"ㅁ":6,"ㅂ":7,"ㅃ":8,"ㅅ":9,"ㅆ":10,"ㅇ":11,"ㅈ":12,"ㅉ":13,"ㅊ":14,"ㅋ":15,"ㅌ":16,"ㅍ":17,"ㅎ":18};
 const VOWEL_IDX={"ㅏ":0,"ㅐ":1,"ㅑ":2,"ㅒ":3,"ㅓ":4,"ㅔ":5,"ㅕ":6,"ㅖ":7,"ㅗ":8,"ㅘ":9,"ㅙ":10,"ㅚ":11,"ㅛ":12,"ㅜ":13,"ㅝ":14,"ㅞ":15,"ㅟ":16,"ㅠ":17,"ㅡ":18,"ㅢ":19,"ㅣ":20};
 const JONG_IDX={"":0,"ㄱ":1,"ㄲ":2,"ㄳ":3,"ㄴ":4,"ㄵ":5,"ㄶ":6,"ㄷ":7,"ㄹ":8,"ㄺ":9,"ㄻ":10,"ㄼ":11,"ㄽ":12,"ㄾ":13,"ㄿ":14,"ㅀ":15,"ㅁ":16,"ㅂ":17,"ㅄ":18,"ㅅ":19,"ㅆ":20,"ㅇ":21,"ㅈ":22,"ㅊ":23,"ㅋ":24,"ㅌ":25,"ㅍ":26,"ㅎ":27};
@@ -422,6 +439,18 @@ function synthCodaFallback(jamo){
 let height=242, f3=1;
 document.getElementById('slider-height').addEventListener('input', e=>{height=+e.target.value; document.getElementById('height-val').textContent=height;});
 document.getElementById('slider-f3').addEventListener('input', e=>{f3=+e.target.value; document.getElementById('f3-label').textContent = f3===0?"声質変更オフ": f3<=0.75?"おっさん声": f3>=1.25?"アニメ声":"ふつう";});
+document.getElementById('cvlist').value = CV_LIST_DEFAULT.join('\n');
+document.querySelectorAll('input[name="mode"]').forEach(r=>{
+  r.addEventListener('change', ()=>{
+    const m=document.querySelector('input[name="mode"]:checked')?.value;
+    const cvCard=document.getElementById('cv-card');
+    if(cvCard) cvCard.style.display = (m==="cv") ? "block" : "none";
+    const malchaCard=document.getElementById('reclist')?.closest('.card');
+    if(malchaCard) malchaCard.style.display = (m==="cv") ? "none" : "block";
+    const cvvcBox=document.querySelector('input[name="cvvc"]')?.closest('div');
+    // CVモードでは CV/VC分ける設定は隠す（CVは元々分かれてる）
+  });
+});
 function toggleTheme(){ const app=document.getElementById('app'); const cur=app.getAttribute('data-theme'); app.setAttribute('data-theme', cur==="dark"?"light":"dark"); }
 
 let _vowelCache={};
@@ -488,8 +517,214 @@ async function generate(){
     // --- ここから分岐 ---
     let otoLines=[];
     let un={}; // wav -> consonant ms (for oto)
-    if(mode==="malcha"){
-      // Malcha 9モーラ CVVC：リスト1行 = 1wav、otoは複数エイリアス
+    if(mode==="cv"){
+      // === CV (フォロワー様リスト) ===
+      const cvText = document.getElementById('cvlist').value;
+      const cvTokens = cvText.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+      // 単独母音も出す
+      for(let L of Object.keys(Ko)){ put(L+".wav", Zi(A[L])); }
+      for(const [syll] of diphList){ put(syll+".wav", Zi(A[syll])); }
+      for(let idx=0; idx<cvTokens.length; idx++){
+        const tok = cvTokens[idx];
+        let seg=null;
+        let hang=null;
+        let aliasRom = tok;
+        if(tok==="br"){
+          seg=new Int16Array(Math.floor($t*0.2)); for(let k=0;k<seg.length;k++) seg[k]=(Math.random()*2-1)*6000;
+          hang="br";
+        } else if(tok.endsWith("R") && tok!=="br"){
+          const base = tok.slice(0,-1); // a, i, n, m, ng, l ...
+          if(base==="n"||base==="m"||base==="ng"||base==="l"){
+            // nR / mR / ngR / lR = 子音 + 休止
+            const jamoMap2={"n":"ㄴ","m":"ㅁ","ng":"ㅇ","l":"ㄹ"};
+            const jamo=jamoMap2[base]||"ㄴ";
+            const con=await getCon(base==="ng"?"ng":base, jamo);
+            const rest=new Int16Array(Math.floor($t*0.15));
+            seg=ed(con.subarray(0, Math.min(2205, con.length)), rest);
+            hang=jamo+"R";
+          } else {
+            // aR / iR / uR / eR / oR / euR / eoR = 母音 + 休止
+            const jung = VOWEL_ROMAJI[base] || (base==="eu"?"ㅡ": base==="eo"?"ㅓ": "아");
+            // base が "eu" "eo" のとき VOWEL_ROMAJIで引ける
+            let vSig=null;
+            if(base==="eu") vSig=A["으"];
+            else if(base==="eo") vSig=A["어"];
+            else if(VOWEL_ROMAJI[base]) vSig=A[VOWEL_ROMAJI[base]]||ly(VOWEL_ROMAJI[base],h,1,f3);
+            else vSig=A["아"];
+            const rest=new Int16Array(Math.floor($t*0.15));
+            seg=ed(vSig, rest);
+            hang=(VOWEL_ROMAJI[base]||"아")+"R";
+            // ハングル単独母音に変換： a->아, i->이, u->우, e->에, o->오, eu->으, eo->어
+            const mapR={"a":"아","i":"이","u":"우","e":"에","o":"오","eu":"으","eo":"어"};
+            hang=mapR[base]||hang;
+            // ファイル名は ハングル + R にしないで、ローマ字のまま (aR.wav) の方がUTALETで分かりやすいので hangは別
+          }
+        } else if(VOWEL_ROMAJI[tok]){
+          // ya, yu, yeo, yo, ye, wa, wi, we, weo, eui など単独母音
+          const jung=VOWEL_ROMAJI[tok];
+          seg=A[jung]||ly(jung,h,1,f3);
+          hang=jung;
+        } else {
+          // CV: onset + vowel
+          // onset を最長一致で探す
+          let onset=null, rest=null;
+          const onsets=Object.keys(ONSET_ROMAJI).sort((a,b)=>b.length-a.length);
+          for(const o of onsets){ if(o && tok.startsWith(o)){ const r=tok.slice(o.length); if(VOWEL_ROMAJI[r]){ onset=o; rest=r; break; } } }
+          if(!onset){ seg=A["아"]; hang=tok; }
+          else {
+            const jung=VOWEL_ROMAJI[rest];
+            const vSig=A[jung]||ly(jung,h,1,f3);
+            const choJamo=ONSET_ROMAJI[onset];
+            // KCho の rom を探す：gg/dd/bb/ss/jj も含む
+            // getCon は rom で探すので、onset が gg なら ga / ka などで代用
+            const romForOnset = (()=>{
+              if(onset==="gg") return "ga";
+              if(onset==="dd") return "da";
+              if(onset==="bb") return "ba";
+              if(onset==="ss") return "za";
+              if(onset==="jj") return "za";
+              if(onset==="g") return "ga";
+              if(onset==="k") return "ka";
+              if(onset==="d") return "da";
+              if(onset==="b") return "ba";
+              if(onset==="s") return "sa";
+              if(onset==="j") return "ji";
+              if(onset==="ch") return "chi";
+              if(onset==="t") return "ta";
+              if(onset==="p") return "pa";
+              if(onset==="n") return "na";
+              if(onset==="m") return "ma";
+              if(onset==="r"||onset==="l") return "ra";
+              if(onset==="h") return "ha";
+              if(onset==="ng") return "ng";
+              return onset;
+            })();
+            const con=await getCon(romForOnset, choJamo);
+            seg=ed(con, vSig);
+            // ハングル： onset jamo + vowel jamo -> 音節
+            const code=0xAC00+ONSET_IDX[choJamo]*588+VOWEL_IDX[jung]*28;
+            hang=String.fromCharCode(code);
+          }
+        }
+        // ファイル名：ハングルが作れたらハングル、R付きはローマ字のまま
+        let wavName;
+        if(tok.endsWith("R")||tok==="br"){ wavName=tok+".wav"; }
+        else if(hang && /^[가-힣]$/.test(hang)){ wavName=hang+".wav"; }
+        else if(hang && hang.length===1 && /^[가-힣]$/.test(hang)){ wavName=hang+".wav"; }
+        else { wavName=tok+".wav"; }
+        // ただし CV の hang が音節 (가, 까...) ならそれを使う
+        if(hang && hang.length===1 && hang.charCodeAt(0)>=0xAC00){ wavName=hang+".wav"; }
+        put(wavName, Zi(seg));
+        const durMs=Math.floor(seg.length/$t*1000);
+        const pre=Math.min(30, Math.floor(durMs*0.3));
+        // oto: ローマ字とハングル両方、CVは1wav=2エイリアス
+        otoLines.push(`${wavName}=${aliasRom},0,${durMs},0,${pre},15`);
+        if(hang && hang!==tok){
+          // hang が "아R" みたいなときはそのまま、音節ならそのまま
+          let hangAlias=hang;
+          if(tok.endsWith("R")){
+            // aR -> 아R ではなく、UTALETでは aR と 아R 両方出す
+            hangAlias=hang;
+            otoLines.push(`${wavName}=${hangAlias},0,${durMs},0,${pre},15`);
+          } else {
+            otoLines.push(`${wavName}=${hangAlias},0,${durMs},0,${pre},15`);
+          }
+          // さらに _付きも (CVVC互換)
+          otoLines.push(`${wavName}=_${aliasRom},0,${durMs},0,${pre},15`);
+          otoLines.push(`${wavName}=_${hangAlias},0,${durMs},0,${pre},15`);
+        } else {
+          otoLines.push(`${wavName}=_${aliasRom},0,${durMs},0,${pre},15`);
+        }
+        const pct=Math.floor((idx+1)/cvTokens.length*100);
+        document.getElementById('bar').style.width=pct+"%";
+        document.getElementById('status').textContent=`生成中… CV ${idx+1} / ${cvTokens.length} (${pct}%)`;
+        if(idx%10===0) await new Promise(r=>setTimeout(r,0));
+      }
+      // 母音のotoも追加
+      for(let L of Object.keys(Ko)){ otoLines.push(`${L}.wav=${L},0,100,0,100,50`); }
+      for(const [syll] of diphList){ otoLines.push(`${syll}.wav=${syll},0,30,0,30,15`); }
+    } else if(mode==="malcha"){
+      // Malcha 9モーラ CVVC：UTAlet用は CVとVCを分ける
+      const cvvcMode = document.querySelector('input[name="cvvc"]:checked')?.value || "separate";
+      // CVとVCを分ける場合のヘルパー
+      function vowelOf(tok){
+        // tok が CVならその母音、VC_MAPならその母音
+        if(VC_MAP[tok]) return VC_MAP[tok][0];
+        if(VOWEL_ROMAJI[tok]) return VOWEL_ROMAJI[tok];
+        const onsets=Object.keys(ONSET_ROMAJI).sort((a,b)=>b.length-a.length);
+        for(const onset of onsets){ if(onset && tok.startsWith(onset)){ const rest=tok.slice(onset.length); if(VOWEL_ROMAJI[rest]) return VOWEL_ROMAJI[rest]; } }
+        return "아";
+      }
+      function onsetOf(tok){
+        if(VC_MAP[tok]) return null;
+        if(VOWEL_ROMAJI[tok]) return null;
+        const onsets=Object.keys(ONSET_ROMAJI).sort((a,b)=>b.length-a.length);
+        for(const onset of onsets){ if(onset && tok.startsWith(onset)){ const rest=tok.slice(onset.length); if(VOWEL_ROMAJI[rest]) return onset; } }
+        return null;
+      }
+      function onsetJamo(onset){
+        if(!onset) return null;
+        return ONSET_ROMAJI[onset] || null;
+      }
+      async function synthCV(tok){
+        // CV = 子音 + 母音
+        if(VC_MAP[tok]){
+          const [v,c]=VC_MAP[tok];
+          const vSig=A[v]||ly(v,h,1,f3);
+          let tail=null;
+          if(c==="ㅇ") tail=(A["ん"]||ly("ん",h,1,f3)).subarray(0,2205);
+          else { const romMap={"ㄴ":"na","ㅁ":"ma","ㄹ":"ra"}; const rom=romMap[c]||"na"; const con=await getCon(rom,c); tail=con.subarray(0, Math.min(2205, con.length)); }
+          return ed(vSig, tail);
+        }
+        if(VOWEL_ROMAJI[tok]){
+          const jung=VOWEL_ROMAJI[tok];
+          return A[jung]||ly(jung,h,1,f3);
+        }
+        const onset = onsetOf(tok);
+        const jung = VOWEL_ROMAJI[tok.slice(onset.length)];
+        const vSig=A[jung]||ly(jung,h,1,f3);
+        const choJamo=onsetJamo(onset);
+        const choEntry=KCho.find(([j])=>j===choJamo);
+        const rom=choEntry?choEntry[2]:"ka";
+        const con=await getCon(rom, choJamo);
+        return ed(con, vSig);
+      }
+      async function synthVC(prevTok, nextTok){
+        // VC = 前の母音 + 次の子音 (例: ka -> kya なら a + ky = "a ky" / "악")
+        const prevVowel = vowelOf(prevTok);
+        const nextOnset = onsetOf(nextTok);
+        if(!nextOnset) return null; // 次が母音だけなら VCなし
+        const vSig = A[prevVowel]||ly(prevVowel,h,1,f3);
+        // 子音は短く切る：鼻音・ㅇは50ms、それ以外は30ms
+        const jamo = onsetJamo(nextOnset);
+        const choEntry=KCho.find(([j])=>j===jamo);
+        const rom=choEntry?choEntry[2]:"ka";
+        const con=await getCon(rom, jamo);
+        const cut = (jamo==="ㄴ"||jamo==="ㅁ"||jamo==="ㅇ")?2205:1323;
+        const tail = con.subarray(0, Math.min(cut, con.length));
+        // VC は母音の後ろ半分 + 子音の頭、くらいに短く
+        // 母音は後ろ 80ms だけ使うと UTAlet が拾いやすい
+        const vTail = vSig.subarray(Math.max(0, vSig.length - Math.floor($t*0.08)));
+        return ed(vTail, tail);
+      }
+      function vcAlias(prevTok, nextTok){
+        // ローマ字: "a ky" / ハングル: "악" (ㅏ+ㄱ) の形
+        const prevVowel = vowelOf(prevTok);
+        const nextOnset = onsetOf(nextTok);
+        if(!nextOnset) return null;
+        // 母音のローマ字を逆引き
+        const vRom = Object.keys(VOWEL_ROMAJI).find(k=>VOWEL_ROMAJI[k]===prevVowel) || "a";
+        const vcRom = vRom + " " + nextOnset;
+        // ハングル: 母音 + 終声
+        const jongMap = {"ㄱ":"ㄱ","ㄲ":"ㄲ","ㄴ":"ㄴ","ㄷ":"ㄷ","ㄸ":"ㄸ","ㄹ":"ㄹ","ㅁ":"ㅁ","ㅂ":"ㅂ","ㅃ":"ㅃ","ㅅ":"ㅅ","ㅆ":"ㅆ","ㅇ":"ㅇ","ㅈ":"ㅈ","ㅉ":"ㅉ","ㅊ":"ㅊ","ㅋ":"ㅋ","ㅌ":"ㅌ","ㅍ":"ㅍ","ㅎ":"ㅎ"};
+        const jamo = onsetJamo(nextOnset);
+        const jong = jongMap[jamo] || "ㄱ";
+        const jongIdx = JONG_IDX[jong];
+        const code = 0xAC00 + 11*588 + VOWEL_IDX[prevVowel]*28 + jongIdx;
+        const vcHang = String.fromCharCode(code);
+        return {vcRom, vcHang, prevVowel, jamo};
+      }
+
       const reclistText=document.getElementById('reclist').value;
       const reclist=reclistText.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
       // まず単独の母音wavも出す（元ファイルと同じく）
@@ -561,10 +796,102 @@ async function generate(){
           }
           starts.push(pos); segs.push(seg); pos+=seg.length;
         }
-        let full=new Int16Array(pos); let p2=0; for(const s of segs){ full.set(s,p2); p2+=s.length; }
-        const wavName=`line${String(idx+1).padStart(3,'0')}.wav`;
-        put(wavName, Zi(full));
+        if(cvvcMode==="separate"){
+          // === CV / VC 分ける (UTAlet用) ===
+          // CV wav: CVトークンだけを繋げる
+          const cvTokens = spoken.filter(t=> !VC_MAP[t] && VOWEL_ROMAJI[t]===undefined ? onsetOf(t)!==null : true);
+          // 実際は spoken のうち CVとして扱えるものだけ
+          // spoken は [ka, kya, kwa, ki, kwi, in, ki ...] みたいな並び
+          // CV = onset+母音 または 母音だけ / VC_MAPは VC側に回す
+          const cvOnly = spoken.filter(t=>{
+            if(VC_MAP[t]) return false; // in/um/ong/il は VC側
+            if(VOWEL_ROMAJI[t]) return true; // 母音だけは CV側
+            return onsetOf(t)!==null;
+          });
+          const vcOnlyTokens = spoken.filter(t=> VC_MAP[t]); // in/um/ong/il
+          // CV wav を作る
+          if(cvOnly.length>0){
+            const cvSegs=[];
+            for(const tok of cvOnly){ cvSegs.push(await synthCV(tok)); }
+            let cvLen=0; for(const s of cvSegs) cvLen+=s.length;
+            let cvFull=new Int16Array(cvLen); let pp=0; for(const s of cvSegs){ cvFull.set(s,pp); pp+=s.length; }
+            const cvWav=`line${String(idx+1).padStart(3,'0')}_CV.wav`;
+            put(cvWav, Zi(cvFull));
+            // CV oto: 各CVトークンの位置
+            let cPos=0; const cStarts=[];
+            for(const s of cvSegs){ cStarts.push(cPos); cPos+=s.length; }
+            // aliases のうち CVに属するものだけ
+            for(const [aliasWith, tok, sIdx] of aliases){
+              if(VC_MAP[tok]) continue;
+              // cvOnly の中でのインデックスを探す
+              const cvIdx = cvOnly.indexOf(tok);
+              if(cvIdx===-1) continue;
+              const startMs=Math.floor(cStarts[cvIdx]/$t*1000);
+              const pre=startMs+30, con=30, ov=15;
+              otoLines.push(`${cvWav}=${aliasWith},${startMs},${con},0,${pre},${ov}`);
+              const hang=romajiToHangul(tok);
+              if(hang!==tok){ const hangAlias=aliasWith.startsWith("_")? "_"+hang : hang; otoLines.push(`${cvWav}=${hangAlias},${startMs},${con},0,${pre},${ov}`); }
+            }
+          }
+          // VC wav: 遷移VC (前母音 + 次子音) + VC_MAP (in/um/ong/il)
+          const vcSegs=[]; const vcAliases=[];
+          // 遷移VC: 連続するCV同士の間
+          for(let vi=0; vi<cvOnly.length-1; vi++){
+            const prev=cvOnly[vi], next=cvOnly[vi+1];
+            const vc = await synthVC(prev, next);
+            if(!vc) continue;
+            const info = vcAlias(prev, next);
+            if(!info) continue;
+            vcSegs.push(vc);
+            vcAliases.push(info);
+          }
+          // VC_MAP も VC wavに入れる (in, um, ong, il)
+          for(const tok of vcOnlyTokens){
+            const seg = await synthCV(tok); // VC_MAPは synthCVで 母音+終声 になる
+            vcSegs.push(seg);
+            // そのままのエイリアス
+            const aliasEntry = aliases.find(([a,t])=>t===tok);
+            if(aliasEntry) vcAliases.push({vcRom:tok, vcHang:romajiToHangul(tok), isDirect:true, origAlias:aliasEntry[0]});
+          }
+          if(vcSegs.length>0){
+            let vcLen=0; for(const s of vcSegs) vcLen+=s.length;
+            let vcFull=new Int16Array(vcLen); let pp=0; const vStarts=[];
+            for(const s of vcSegs){ vStarts.push(pp); vcFull.set(s,pp); pp+=s.length; }
+            const vcWav=`line${String(idx+1).padStart(3,'0')}_VC.wav`;
+            put(vcWav, Zi(vcFull));
+            for(let vi=0; vi<vcAliases.length; vi++){
+              const info=vcAliases[vi];
+              const startMs=Math.floor(vStarts[vi]/$t*1000);
+              const pre=startMs+30, con=30, ov=15;
+              if(info.isDirect){
+                otoLines.push(`${vcWav}=${info.origAlias},${startMs},${con},0,${pre},${ov}`);
+                const hang=romajiToHangul(info.vcRom);
+                if(hang!==info.vcRom){
+                  const hangAlias=info.origAlias.startsWith("_")? "_"+hang : hang;
+                  otoLines.push(`${vcWav}=${hangAlias},${startMs},${con},0,${pre},${ov}`);
+                }
+              } else {
+                // 遷移VC: "a ky" と "악" の両方
+                otoLines.push(`${vcWav}=${info.vcRom},${startMs},${con},0,${pre},${ov}`);
+                otoLines.push(`${vcWav}=${info.vcHang},${startMs},${con},0,${pre},${ov}`);
+                // _付きも (CVVCの _ 対応)
+                otoLines.push(`${vcWav}=_${info.vcRom},${startMs},${con},0,${pre},${ov}`);
+                otoLines.push(`${vcWav}=_${info.vcHang},${startMs},${con},0,${pre},${ov}`);
+              }
+            }
+          }
+          // ログ用に wavName をダミーで
+          const wavName=`line${String(idx+1).padStart(3,'0')}_CV.wav`;
+        } else {
+          // === まとめる (旧来の CVVC 1wav) ===
+          let full=new Int16Array(pos); let p2=0; for(const s of segs){ full.set(s,p2); p2+=s.length; }
+          const wavName=`line${String(idx+1).padStart(3,'0')}.wav`;
+          put(wavName, Zi(full));
+        }
         // frq は後で一括
+        if(cvvcMode==="separate"){
+          // 分けるモードでは上で CV/VC別に oto を出したのでここはスキップ
+        } else {
         for(const [aliasWith, tok, sIdx] of aliases){
           const startMs=Math.floor(starts[sIdx]/$t*1000);
           let pre, con, ov;
@@ -579,6 +906,7 @@ async function generate(){
             otoLines.push(`${wavName}=${hangAlias},${startMs},${con},0,${pre},${ov}`);
           }
         }
+        } // end else (together)
         const pct=Math.floor((idx+1)/reclist.length*100);
         document.getElementById('bar').style.width=pct+"%";
         document.getElementById('status').textContent=`生成中… Malcha ${idx+1} / ${reclist.length} (${pct}%)`;
