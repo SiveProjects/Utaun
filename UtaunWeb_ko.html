@@ -1,6 +1,6 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Utaun Web 韓国語仮</title>
+<title>Utaun Web </title>
 <style>
 :root{--bg:#fff;--fg:#222;--border:#ddd;--input-bg:#f8f8f8;--panel-bg:#fff;--muted:#888}
 [data-theme="dark"]{--bg:#1a1a1a;--fg:#eee;--border:#444;--input-bg:#2a2a2a;--panel-bg:#222;--muted:#aaa}
@@ -164,7 +164,7 @@ function synthConsonantFallback(jamo){
   if(jamo==="ㄴ"){ for(let i=0;i<n;i++){const t=i/$t; out[i]=(0.65*Math.sin(2*Math.PI*240*t)+0.25*Math.sin(2*Math.PI*480*t))*14000;} return out; }
   if(jamo==="ㅁ"){ for(let i=0;i<n;i++){const t=i/$t; out[i]=(0.7*Math.sin(2*Math.PI*190*t)+0.2*Math.sin(2*Math.PI*380*t))*14000;} return out; }
   if(jamo==="ㅇ"){ for(let i=0;i<n;i++){const t=i/$t; out[i]=(0.6*Math.sin(2*Math.PI*210*t)+0.3*Math.sin(2*Math.PI*630*t))*13000;} return out; }
-  if(jamo==="ㄹ"){ for(let i=0;i<n;i++){const t=i/$t; out[i]=(0.55*Math.sin(2*Math.PI*460*t)+0.2*Math.sin(2*Math.PI*920*t))*13000*(1-0.5*(i/n));} return out; }
+  if(jamo==="ㄹ"){ for(let i=0;i<n;i++){const t=i/$t; out[i]=(0.65*Math.sin(2*Math.PI*230*t)+0.25*Math.sin(2*Math.PI*460*t))*13500*(1-0.4*(i/n));} return out; }
   // 摩擦音・気音
   if(jamo==="ㅅ"){ for(let i=0;i<n;i++){const env=Math.sin(Math.PI*(i/n)); out[i]=(Math.random()*2-1)*13000*env;} return out; }
   if(jamo==="ㅆ"){ for(let i=0;i<n;i++){const env=i<n*0.15?0.1:Math.sin(Math.PI*((i-n*0.15)/(n*0.85))); out[i]=(Math.random()*2-1)*16000*env;} return out; }
