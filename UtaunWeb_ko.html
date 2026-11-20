@@ -21,7 +21,7 @@
 }
 </style><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Utaun Web - CV+VC+フル ハングルだけ</title>
+<title>Utaun Web - CV+VC+フル frqあり 軽量版</title>
 <style>
 :root{--bg:#fff;--fg:#222;--border:#ddd;--input-bg:#f8f8f8;--panel-bg:#fff;--muted:#888}
 [data-theme="dark"]{--bg:#1a1a1a;--fg:#eee;--border:#444;--input-bg:#2a2a2a;--panel-bg:#222;--muted:#aaa}
@@ -51,13 +51,11 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <body>
 <div class="wrap" id="app" data-theme="light">
 <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:15px"><h1>Utaun</h1><button class="btn" onclick="toggleTheme()">🌙 / ☀️</button></div>
-<p style="text-align:center;font-size:12px;color:var(--muted);margin:-8px 0 12px">CV + VC + フル音節全部 / ハングルだけ / 잭 あり</p>
+<p style="text-align:center;font-size:12px;color:var(--muted);margin:-8px 0 12px">CV + VC + フル音節 / frqあり / ハングルだけ / 落ちない軽量版</p>
 <div class="card fix"><b>修正点</b><br>
-・ㅐ (ae) が抜けてて 잭 が作れなかったのを修正：ae / yae / wae / oe を追加<br>
-・KCho修正：ㄱ=ga / ㅋ=ka、ㄷ=da / ㅌ=ta、ㅂ=ba / ㅍ=pa<br>
-・母音が全部「あ」になるバグ修正：ジャモ→音節の対応表で A[ㅏ] を A[아] に直した<br>
-・継ぎ目はゼロクロス付近でカット + 5msクロスフェード、頭・お尻は128サンプルでフェード<br>
-・英語（ローマ字）エイリアスなしでも使える。ハングルだけで打てる
+・ㅐ (ae) 追加で 잭 が作れる。ㅣ が あ になるのを修正、他の母音も全部 あ になるのを修正<br>
+・フォールバック削除で 익 が あ.wav に向くバグを修正。oto.ini は厳格化で同じハングルのwavだけに紐付く<br>
+・R / br なし (aR, iR, br みたいな呼吸・休符は UTAU側が足すから作らない)。フルは全部だと落ちるから、デフォルトは ha, geu, jo, jae, i だけの軽い版。frq は必ず作る
 </div>
 <div style="margin-bottom:12px;text-align:center"><label for="input-name">名前</label><div class="tk-input-wrap"><input id="input-name" type="text" value="" placeholder=""></div></div>
 <div style="margin-bottom:12px;text-align:center"><label for="input-author">作者</label><div class="tk-input-wrap"><input id="input-author" type="text" value="" placeholder=""></div></div>
@@ -68,26 +66,26 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <div style="margin-bottom:12px;text-align:center"><span style="font-size:13px;display:block">声質</span><div style="font-size:12px" id="f3-label">ふつう</div><input type="range" id="slider-f3" min="0" max="1.5" step="0.01" value="1"><div style="display:flex;justify-content:space-between;font-size:12px"><span>おっさん声</span><span>アニメ声</span></div></div>
 <div class="card">
 <h2>CV レコリスト</h2>
-<p>1行 = 1音 = 1wav。ae系も入ってるから 잭 が作れる。</p>
+<p>ae系も入ってるから 잭 が作れる。</p>
 <textarea class="reclist" id="cvlist"></textarea>
 </div>
 <div class="card">
 <h2>VC レコリスト（母音21 × パッチム8 = 168音）</h2>
-<p>パッチムのしっぽ用。<code>재</code> + <code>ae k</code> で <code>잭</code> になる。</p>
+<p>パッチムのしっぽ用。<code>재</code> + <code>ae k</code> で <code>잭</code>、<code>이</code> + <code>i k</code> で <code>익</code></p>
 <textarea class="reclist" id="vclist"></textarea>
 </div>
 <div class="card">
-<label style="cursor:pointer;font-size:13px"><input type="checkbox" id="chk-full" checked=""> パッチム付きフル音節も作る（한, 글, 좋, 잭 が1ノートで歌える）</label>
-<div style="font-size:12px;color:var(--muted);margin-top:4px">全部（CV 408 × パッチム8 = 3264音）作ると重い。軽くしたいときは下を ha, geu, jo に戻して。</div>
-<div style="margin-top:6px"><label style="font-size:12px">フル音節を作るCV（カンマ区切り）</label><div class="tk-input-wrap"><input id="input-full-cv" type="text" value="all" placeholder="all / ha, geu, jo"></div></div>
+<label style="cursor:pointer;font-size:13px"><input type="checkbox" id="chk-full" checked=""> パッチム付きフル音節も作る（한, 글, 좋, 잭, 익 が1ノートで歌える）</label>
+<div style="font-size:12px;color:var(--muted);margin-top:4px">全部（3136音）にすると落ちるから、デフォルトは軽い版。all と書くと全部作る（重い・落ちるかも）。frq は必ず作る。</div>
+<div style="margin-top:6px"><label style="font-size:12px">フル音節を作るCV（カンマ区切り）</label><div class="tk-input-wrap"><input id="input-full-cv" type="text" value="ha, geu, jo, jae, i" placeholder="ha, geu, jo, jae, i"></div></div>
 </div>
 <div class="card">
 <label style="cursor:pointer;font-size:13px"><input type="checkbox" id="chk-english"> 英語（ローマ字）エイリアスも入れる（ga / han とか）</label>
-<div style="font-size:12px;color:var(--muted);margin-top:4px">オフだとハングルだけ（가 / 한 / 잭）。oto.iniが半分くらいになって軽くなる。</div>
+<div style="font-size:12px;color:var(--muted);margin-top:4px">オフだとハングルだけ（가 / 한 / 잭 / 익）。oto.iniが半分くらいになって軽くなる。</div>
 </div>
 <div class="card">
-<h2>試聴 - 요 ≠ 유 / 잭</h2>
-<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="playSample('요')">▶ 요 (yo)</button><button class="btn" onclick="playSample('유')">▶ 유 (yu)</button><button class="btn" onclick="playSample('카')">▶ 카 (ka)</button><button class="btn" onclick="playSample('가')">▶ 가 (ga)</button><button class="btn" onclick="playSample('잭')">▶ 잭 (jaek)</button></div>
+<h2>試聴</h2>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="playSample('요')">▶ 요</button><button class="btn" onclick="playSample('유')">▶ 유</button><button class="btn" onclick="playSample('잭')">▶ 잭</button><button class="btn" onclick="playSample('익')">▶ 익</button></div>
 </div>
 <div style="margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:10px;padding-bottom:10px">
 <div style="font-size:11px;color:var(--muted);text-align:center">音が出ない場合は iPhoneの消音モードをオフにしてください</div>
@@ -102,15 +100,14 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 </div>
 <div class="card">
 <h2>oto.ini の合わせ方</h2>
-<p>ハングルだけ版：<code>가.wav=가 / _가</code>、<code>안.wav=안 / _안</code>、<code>잭.wav=잭 / _잭</code></p>
-<p><b>パッチムの打ち方：</b><br>
-・フル音節打ち：<code>잭</code> は <code>잭</code> の1ノート、<code>한</code> は <code>한</code>、<code>글</code> は <code>글</code><br>
-・VC打ち（フルを作ってないとき）：<code>잭</code> は <code>재</code> + <code>ae k</code>、<code>한</code> は <code>하</code> + <code>a n</code></p>
+<p>ハングルだけ版：<code>가.wav=가 / _가</code>、<code>익.wav=익 / _익</code>、<code>잭.wav=잭 / _잭</code>、frqあり</p>
+<p>フル音節打ち：<code>익</code> は <code>익</code> の1ノート、<code>잭</code> は <code>잭</code>、<code>한</code> は <code>한</code><br>
+VC打ち：<code>익</code> は <code>이</code> + <code>i k</code>、<code>잭</code> は <code>재</code> + <code>ae k</code></p>
 </div>
 </div>
 <script>
 
-const CV_LIST_DEFAULT = ["ga", "gi", "gu", "ge", "go", "geu", "geo", "gya", "gyu", "gyeo", "gyo", "gye", "gwa", "geui", "gwi", "gwe", "gweo", "gga", "ggi", "ggu", "gge", "ggo", "ggeu", "ggeo", "ggya", "ggyu", "ggyeo", "ggyo", "ggye", "ggwa", "ggeui", "ggwi", "ggwe", "ggweo", "na", "ni", "nu", "ne", "no", "neu", "neo", "nya", "nyu", "nyeo", "nyo", "nye", "nwa", "neui", "nwi", "nwe", "nweo", "da", "di", "du", "de", "do", "deu", "deo", "dya", "dyu", "dyeo", "dyo", "dye", "dwa", "deui", "dwi", "dwe", "dweo", "dda", "ddi", "ddu", "dde", "ddo", "ddeu", "ddeo", "ddya", "ddyu", "ddyeo", "ddyo", "ddye", "ddwa", "ddeui", "ddwi", "ddwe", "ddweo", "ra", "ri", "ru", "re", "ro", "reu", "reo", "rya", "ryu", "ryeo", "ryo", "rye", "rwa", "reui", "rwi", "rwe", "rweo", "ma", "mi", "mu", "me", "mo", "meu", "meo", "mya", "myu", "myeo", "myo", "mye", "mwa", "meui", "mwi", "mwe", "mweo", "ba", "bi", "bu", "be", "bo", "beu", "beo", "bya", "byu", "byeo", "byo", "bye", "bwa", "beui", "bwi", "bwe", "bweo", "bba", "bbi", "bbu", "bbe", "bbo", "bbeu", "bbeo", "bbya", "bbyu", "bbyeo", "bbyo", "bbye", "bbwa", "bbeui", "bbwi", "bbwe", "bbweo", "sa", "si", "su", "se", "so", "seu", "seo", "sya", "syu", "syeo", "syo", "sye", "swa", "seui", "swi", "swe", "sweo", "ssa", "ssi", "ssu", "sse", "sso", "sseu", "sseo", "ssya", "ssyu", "ssyeo", "ssyo", "ssye", "sswa", "sseui", "sswi", "sswe", "ssweo", "aR", "iR", "uR", "eR", "oR", "euR", "eoR", "ya", "yu", "yeo", "yo", "ye", "wa", "wi", "we", "weo", "eui", "ja", "ji", "ju", "je", "jo", "jeu", "jeo", "jya", "jyu", "jyeo", "jyo", "jye", "jwa", "jeui", "jwi", "jwe", "jweo", "jja", "jji", "jju", "jje", "jjo", "jjeu", "jjeo", "jjya", "jjyu", "jjyeo", "jjyo", "jjye", "jjwa", "jjeui", "jjwi", "jjwe", "jjweo", "cha", "chi", "chu", "che", "cho", "cheu", "cheo", "chya", "chyu", "chyeo", "chyo", "chye", "chwa", "cheui", "chwi", "chwe", "chweo", "ka", "ki", "ku", "ke", "ko", "keu", "keo", "kya", "kyu", "kyeo", "kyo", "kye", "kwa", "keui", "kwi", "kwe", "kweo", "ta", "ti", "tu", "te", "to", "teu", "teo", "tya", "tyu", "tyeo", "tyo", "tye", "twa", "teui", "twi", "twe", "tweo", "pa", "pi", "pu", "pe", "po", "peu", "peo", "pya", "pyu", "pyeo", "pyo", "pye", "pwa", "peui", "pwi", "pwe", "pweo", "ha", "hi", "hu", "he", "ho", "heu", "heo", "hya", "hyu", "hyeo", "hyo", "hye", "hwa", "heui", "hwi", "hwe", "hweo", "nR", "mR", "ngR", "lR", "br", "ae", "yae", "wae", "oe", "gae", "gyae", "gwae", "goe", "ggae", "ggyae", "ggwae", "ggoe", "nae", "nyae", "nwae", "noe", "dae", "dyae", "dwae", "doe", "ddae", "ddyae", "ddwae", "ddoe", "rae", "ryae", "rwae", "roe", "mae", "myae", "mwae", "moe", "bae", "byae", "bwae", "boe", "bbae", "bbyae", "bbwae", "bboe", "sae", "syae", "swae", "soe", "ssae", "ssyae", "sswae", "ssoe", "jae", "jyae", "jwae", "joe", "jjae", "jjyae", "jjwae", "jjoe", "chae", "chyae", "chwae", "choe", "kae", "kyae", "kwae", "koe", "tae", "tyae", "twae", "toe", "pae", "pyae", "pwae", "poe", "hae", "hyae", "hwae", "hoe"];
+const CV_LIST_DEFAULT = ["ga", "gi", "gu", "ge", "go", "geu", "geo", "gya", "gyu", "gyeo", "gyo", "gye", "gwa", "geui", "gwi", "gwe", "gweo", "gga", "ggi", "ggu", "gge", "ggo", "ggeu", "ggeo", "ggya", "ggyu", "ggyeo", "ggyo", "ggye", "ggwa", "ggeui", "ggwi", "ggwe", "ggweo", "na", "ni", "nu", "ne", "no", "neu", "neo", "nya", "nyu", "nyeo", "nyo", "nye", "nwa", "neui", "nwi", "nwe", "nweo", "da", "di", "du", "de", "do", "deu", "deo", "dya", "dyu", "dyeo", "dyo", "dye", "dwa", "deui", "dwi", "dwe", "dweo", "dda", "ddi", "ddu", "dde", "ddo", "ddeu", "ddeo", "ddya", "ddyu", "ddyeo", "ddyo", "ddye", "ddwa", "ddeui", "ddwi", "ddwe", "ddweo", "ra", "ri", "ru", "re", "ro", "reu", "reo", "rya", "ryu", "ryeo", "ryo", "rye", "rwa", "reui", "rwi", "rwe", "rweo", "ma", "mi", "mu", "me", "mo", "meu", "meo", "mya", "myu", "myeo", "myo", "mye", "mwa", "meui", "mwi", "mwe", "mweo", "ba", "bi", "bu", "be", "bo", "beu", "beo", "bya", "byu", "byeo", "byo", "bye", "bwa", "beui", "bwi", "bwe", "bweo", "bba", "bbi", "bbu", "bbe", "bbo", "bbeu", "bbeo", "bbya", "bbyu", "bbyeo", "bbyo", "bbye", "bbwa", "bbeui", "bbwi", "bbwe", "bbweo", "sa", "si", "su", "se", "so", "seu", "seo", "sya", "syu", "syeo", "syo", "sye", "swa", "seui", "swi", "swe", "sweo", "ssa", "ssi", "ssu", "sse", "sso", "sseu", "sseo", "ssya", "ssyu", "ssyeo", "ssyo", "ssye", "sswa", "sseui", "sswi", "sswe", "ssweo", "ya", "yu", "yeo", "yo", "ye", "wa", "wi", "we", "weo", "eui", "ja", "ji", "ju", "je", "jo", "jeu", "jeo", "jya", "jyu", "jyeo", "jyo", "jye", "jwa", "jeui", "jwi", "jwe", "jweo", "jja", "jji", "jju", "jje", "jjo", "jjeu", "jjeo", "jjya", "jjyu", "jjyeo", "jjyo", "jjye", "jjwa", "jjeui", "jjwi", "jjwe", "jjweo", "cha", "chi", "chu", "che", "cho", "cheu", "cheo", "chya", "chyu", "chyeo", "chyo", "chye", "chwa", "cheui", "chwi", "chwe", "chweo", "ka", "ki", "ku", "ke", "ko", "keu", "keo", "kya", "kyu", "kyeo", "kyo", "kye", "kwa", "keui", "kwi", "kwe", "kweo", "ta", "ti", "tu", "te", "to", "teu", "teo", "tya", "tyu", "tyeo", "tyo", "tye", "twa", "teui", "twi", "twe", "tweo", "pa", "pi", "pu", "pe", "po", "peu", "peo", "pya", "pyu", "pyeo", "pyo", "pye", "pwa", "peui", "pwi", "pwe", "pweo", "ha", "hi", "hu", "he", "ho", "heu", "heo", "hya", "hyu", "hyeo", "hyo", "hye", "hwa", "heui", "hwi", "hwe", "hweo", "ae", "yae", "wae", "oe", "gae", "gyae", "gwae", "goe", "ggae", "ggyae", "ggwae", "ggoe", "nae", "nyae", "nwae", "noe", "dae", "dyae", "dwae", "doe", "ddae", "ddyae", "ddwae", "ddoe", "rae", "ryae", "rwae", "roe", "mae", "myae", "mwae", "moe", "bae", "byae", "bwae", "boe", "bbae", "bbyae", "bbwae", "bboe", "sae", "syae", "swae", "soe", "ssae", "ssyae", "sswae", "ssoe", "jae", "jyae", "jwae", "joe", "jjae", "jjyae", "jjwae", "jjoe", "chae", "chyae", "chwae", "choe", "kae", "kyae", "kwae", "koe", "tae", "tyae", "twae", "toe", "pae", "pyae", "pwae", "poe", "hae", "hyae", "hwae", "hoe"];
 const VC_VOWELS = ["a","ae","i","u","e","o","eo","eu","ya","yae","ye","yeo","yo","yu","wa","wae","we","weo","wi","oe","eui"];
 const VC_CODAS = ["k","n","t","l","m","p","ng","h"];
 const VC_LIST_DEFAULT = [];
@@ -163,16 +160,13 @@ const ONSET_IDX={"ㄱ":0,"ㄲ":1,"ㄴ":2,"ㄷ":3,"ㄸ":4,"ㄹ":5,"ㅁ":6,"ㅂ":7
 const VOWEL_IDX={"ㅏ":0,"ㅐ":1,"ㅑ":2,"ㅒ":3,"ㅓ":4,"ㅔ":5,"ㅕ":6,"ㅖ":7,"ㅗ":8,"ㅘ":9,"ㅙ":10,"ㅚ":11,"ㅛ":12,"ㅜ":13,"ㅝ":14,"ㅞ":15,"ㅟ":16,"ㅠ":17,"ㅡ":18,"ㅢ":19,"ㅣ":20};
 const JONG_IDX={"":0,"ㄱ":1,"ㄲ":2,"ㄳ":3,"ㄴ":4,"ㄵ":5,"ㄶ":6,"ㄷ":7,"ㄹ":8,"ㄺ":9,"ㄻ":10,"ㄼ":11,"ㄽ":12,"ㄾ":13,"ㄿ":14,"ㅀ":15,"ㅁ":16,"ㅂ":17,"ㅄ":18,"ㅅ":19,"ㅆ":20,"ㅇ":21,"ㅈ":22,"ㅊ":23,"ㅋ":24,"ㅌ":25,"ㅍ":26,"ㅎ":27};
 const KCho=[["ㄱ",0,"ga"],["ㄲ",1,"kka"],["ㄴ",2,"na"],["ㄷ",3,"da"],["ㄸ",4,"tta"],["ㄹ",5,"ra"],["ㅁ",6,"ma"],["ㅂ",7,"ba"],["ㅃ",8,"ppa"],["ㅅ",9,"sa"],["ㅆ",10,"za"],["ㅇ",11,""],["ㅈ",12,"ji"],["ㅉ",13,"jja"],["ㅊ",14,"chi"],["ㅋ",15,"ka"],["ㅌ",16,"ta"],["ㅍ",17,"pa"],["ㅎ",18,"ha"]];
-const KJong=[["ㄱ",1,"ga"],["ㄲ",2,"kka"],["ㄳ",3,"ga"],["ㄴ",4,"na"],["ㄵ",5,"na"],["ㄶ",6,"na"],["ㄷ",7,"da"],["ㄹ",8,"ra"],["ㄺ",9,"ra"],["ㄻ",10,"ra"],["ㄼ",11,"ra"],["ㄽ",12,"ra"],["ㄾ",13,"ra"],["ㄿ",14,"ba"],["ㅀ",15,"ra"],["ㅁ",16,"ma"],["ㅂ",17,"ba"],["ㅄ",18,"ba"],["ㅅ",19,"sa"],["ㅆ",20,"za"],["ㅇ",21,"ng"],["ㅈ",22,"ji"],["ㅊ",23,"chi"],["ㅋ",24,"ka"],["ㅌ",25,"ta"],["ㅍ",26,"pa"],["ㅎ",27,"ha"]];
-const VC_MAP={"in":["ㅣ","ㄴ"],"um":["ㅜ","ㅁ"],"ong":["ㅗ","ㅇ"],"il":["ㅣ","ㄹ"]};
 function romajiToHangul(tok){
   if(tok==="R"||tok==="br"||tok==="") return tok;
   if(tok==="ng") return "ㅇ";
   if(tok==="n") return "ㄴ"; if(tok==="m") return "ㅁ"; if(tok==="l") return "ㄹ";
-  if(VC_MAP[tok]){const [v,c]=VC_MAP[tok]; return String.fromCharCode(0xAC00+11*588+VOWEL_IDX[v]*28+JONG_IDX[c]);}
   if(VOWEL_ROMAJI[tok]){const v=VOWEL_ROMAJI[tok]; return String.fromCharCode(0xAC00+11*588+VOWEL_IDX[v]*28);}
   const onsets=Object.keys(ONSET_ROMAJI).sort((a,b)=>b.length-a.length);
-  for(const onset of onsets){ if(onset&&tok.startsWith(onset)){ const rest=tok.slice(onset.length); if(VOWEL_ROMAJI[rest]){ if(tok==="kssa"||tok==="pssa") return String.fromCharCode(0xAC00+ONSET_IDX["ㅆ"]*588+VOWEL_IDX["ㅏ"]*28); const o=ONSET_ROMAJI[onset]; const v=VOWEL_ROMAJI[rest]; return String.fromCharCode(0xAC00+ONSET_IDX[o]*588+VOWEL_IDX[v]*28); } } }
+  for(const onset of onsets){ if(onset&&tok.startsWith(onset)){ const rest=tok.slice(onset.length); if(VOWEL_ROMAJI[rest]){ const o=ONSET_ROMAJI[onset]; const v=VOWEL_ROMAJI[rest]; return String.fromCharCode(0xAC00+ONSET_IDX[o]*588+VOWEL_IDX[v]*28); } } }
   return tok;
 }
 function synthConsonantFallback(jamo){
@@ -201,10 +195,8 @@ async function playSample(ch){
   let sig=null;
   if(ch==="요") sig=ed(glideI, A["오"]);
   else if(ch==="유") sig=ed(glideI, A["우"]);
-  else if(ch==="카"){ const c=await hy("ka","ㅋ", new Set()) || synthConsonantFallback("ㅋ"); sig=ed(c, A["아"]); }
-  else if(ch==="가"){ const c=await hy("ga","ㄱ", new Set()) || synthConsonantFallback("ㄱ"); sig=ed(c, A["아"]); }
   else if(ch==="잭"){ const c=await hy("jae","ㅈ", new Set()) || synthConsonantFallback("ㅈ"); const jae=ed(c, A["애"]); const tail=synthCodaFallback("ㄱ"); sig=ed(jae, tail); }
-  else if(ch==="인"){ const tail=A["ん"]? A["ん"].subarray(0,2205) : synthCodaFallback("ㄴ"); sig=ed(A["이"], tail); }
+  else if(ch==="익"){ const tail=synthCodaFallback("ㄱ"); sig=ed(A["이"].subarray(0,13230), tail); }
   else sig=A["아"];
   const wav=Zi(sig);
   const blob=new Blob([wav], {type:"audio/wav"});
@@ -238,8 +230,6 @@ async function generate(){
     const glideI=A["이"].subarray(0,1323), glideU=A["우"].subarray(0,1323), glideEU=A["으"].subarray(0,1323);
     const diphList=[["야",glideI,"아"],["얘",glideI,"애"],["여",glideI,"어"],["예",glideI,"에"],["요",glideI,"오"],["유",glideI,"우"],["와",glideU,"아"],["왜",glideU,"애"],["외",glideU,"에"],["워",glideU,"어"],["웨",glideU,"에"],["위",glideU,"이"],["의",glideEU,"이"]];
     for(const [syll,glide,base] of diphList){ if(!A[syll]) A[syll]=ed(glide, A[base]); }
-    // 念のため: diphthong の A が glide なしで あ になってないか確認して、ty から直接作り直す場合は ed を使わない
-    // (ここでは ed の結果をそのまま使う)
     const _cmap=new Map();
     async function getCon(rom, label){
       const key=rom+"|"+label;
@@ -326,7 +316,7 @@ async function generate(){
       const pct=Math.floor((idx+1)/cvTokens.length*100);
       document.getElementById('bar').style.width=pct+"%";
       document.getElementById('status').textContent=`生成中… CV ${idx+1} / ${cvTokens.length} (${pct}%)`;
-      if(idx%10===0) await new Promise(r=>setTimeout(r,0));
+      if(idx%5===0) await new Promise(r=>setTimeout(r,0));
     }
     const CODA_JAMO = {"k":"ㄱ","n":"ㄴ","t":"ㄷ","l":"ㄹ","m":"ㅁ","p":"ㅂ","ng":"ㅇ","h":"ㅎ"};
     const vcText = document.getElementById('vclist').value;
@@ -358,31 +348,24 @@ async function generate(){
       if(useEnglish) otoLines.push(`${wavNameVC}=_${aliasVC},0,${durMsVC},0,${preVC},15`);
       otoLines.push(`${wavNameVC}=_${vcHang},0,${durMsVC},0,${preVC},15`);
       if(useEnglish) otoLines.push(`${wavNameVC}=${aliasVC_nospace},0,${durMsVC},0,${preVC},15`);
-      if(idx%20===0) await new Promise(r=>setTimeout(r,0));
+      if(idx%10===0) await new Promise(r=>setTimeout(r,0));
     }
-    // 母音だけ + パッチム (익, 악, 욱 など) を純粋な母音から作り直す: 익 が あー になるのを直す
+    // 母音だけ + パッチム (익, 악, 욱 など) を純粋な母音から作り直す
     {
       const _vowelOnly = ["아","이","우","오","애","어","에","으","야","얘","여","예","요","유","와","왜","외","워","웨","위","의"];
       const _codaMap2 = {"k":"ㄱ","n":"ㄴ","t":"ㄷ","l":"ㄹ","m":"ㅁ","p":"ㅂ","ng":"ㅇ","h":"ㅎ"};
       for(const _vSyll of _vowelOnly){
         const _vCode = _vSyll.charCodeAt(0);
         if(_vCode<0xAC00||_vCode>0xD7A3) continue;
-        // _vSyll の母音インデックスを取り出す
-        const _vIdx = Math.floor(((_vCode-0xAC00)%588)/28);
         const _vSegFull = A[_vSyll] || ly(_vSyll,h,1,f3);
-        // 母音だけの純粋な部分 (0.3s) を使う: iR のような余計な無音が混ざらないように
         const _vPartPure = _vSegFull.subarray(0, Math.floor($t*0.3));
         for(const [_cRom,_cJamo] of Object.entries(_codaMap2)){
           const _fullHang2 = String.fromCharCode(_vCode + JONG_IDX[_cJamo]);
-          // 既に VC で作った 익.wav が あ になってる可能性があるので、ここで正しい母音で上書きする
           let _tail2 = synthCodaFallback(_cJamo);
           if(_tail2.length>Math.floor($t*0.12)) _tail2=_tail2.subarray(0, Math.floor($t*0.12));
           const _seg2 = ed(_vPartPure, _tail2);
           const _wav2 = _fullHang2+".wav";
-          // 既存の otoLines に _fullHang2 のエイリアスがあれば、一旦その wav のエイリアスだけ残して、後で正しい wav に差し替える
-          // ここでは wav だけ上書きして、oto は後でフル生成のフィルタで整理する
           put(_wav2, Zi(_seg2));
-          // otoLines に _fullHang2 がなければ追加 (VC で既にある場合は重複しないようにチェック)
           const _has2 = otoLines.some(l=>l.startsWith(_wav2+"="+_fullHang2+",")||l.startsWith(_wav2+"=_"+_fullHang2+","));
           if(!_has2){
             const _dur2=Math.floor(_seg2.length/$t*1000);
@@ -391,9 +374,10 @@ async function generate(){
             otoLines.push(`${_wav2}=_${_fullHang2},0,${_dur2},0,${_pre2},15`);
           }
         }
+        await new Promise(r=>setTimeout(r,0));
       }
     }
-    // フォールバック削除: 익 が あ.wav (아.wav) に向いて あーって鳴る原因だったので、パッチム付きは VC / フル音節の wav だけに紐付ける
+    // フル音節 (選んだCVだけ、デフォルトは軽い版)
     if(document.getElementById('chk-full') && document.getElementById('chk-full').checked){
       const _fullCvRaw = (document.getElementById('input-full-cv') ? document.getElementById('input-full-cv').value : "").trim();
       const _isAll = _fullCvRaw.toLowerCase()==="all";
@@ -403,7 +387,6 @@ async function generate(){
         const _codaJamoFull = {"k":"ㄱ","n":"ㄴ","t":"ㄷ","l":"ㄹ","m":"ㅁ","p":"ㅂ","ng":"ㅇ","h":"ㅎ"};
         const _hangToRom = new Map();
         for(const _line of otoLines){ const _m=_line.match(/^(.+\.wav)=([^,]+),/); if(_m){ const _wav=_m[1]; const _al=_m[2]; if(!_al.startsWith("_") && !_al.includes(" ") && _wav.replace(".wav","").length===1){ if(!_hangToRom.has(_wav.replace(".wav",""))) _hangToRom.set(_wav.replace(".wav",""), _al); } } }
-        let _fullCount=0;
         for(const [ _baseHang, _baseSeg ] of fullSegMap){
           const _baseCode=_baseHang.charCodeAt(0);
           const _baseRom=_hangToRom.get(_baseHang) || _baseHang;
@@ -424,31 +407,14 @@ async function generate(){
             otoLines.push(`${_fullWav}=_${_fullHang},0,${_durFull},0,${_preFull},15`);
             if(useEnglish) otoLines.push(`${_fullWav}=${_romFull},0,${_durFull},0,${_preFull},15`);
             if(useEnglish) otoLines.push(`${_fullWav}=_${_romFull},0,${_durFull},0,${_preFull},15`);
-            _fullCount++;
           }
-        }
-        const _fullHangSet = new Set([...D.keys()].map(k=>k.split("/").pop().replace(".wav","")).filter(s=>s.length===1 && s.charCodeAt(0)>=0xAC00 && (s.charCodeAt(0)-0xAC00)%28!==0));
-        if(_fullHangSet.size){
-          otoLines = otoLines.filter(line=>{
-            const _mm=line.match(/^(.+\.wav)=([^,]+),/);
-            if(!_mm) return true;
-            const _wav=_mm[1], _al=_mm[2].replace(/^_/,"");
-            if(_fullHangSet.has(_al) && _wav!==_al+".wav"){
-              if(_wav.split("/").pop().replace(".wav","").length===1){
-                const _wavBase=_wav.split("/").pop().replace(".wav","");
-                if((_wavBase.charCodeAt(0)-0xAC00)%28===0) return false;
-              }
-            }
-            return true;
-          });
+          await new Promise(r=>setTimeout(r,0));
         }
       }
     }
     for(let L of Object.keys(Ko)){ otoLines.push(`${L}.wav=${L},0,100,0,100,50`); }
     for(const [syll] of diphList){ otoLines.push(`${syll}.wav=${syll},0,30,0,30,15`); }
-    let Eu=new Map;
-    for(let [L,re] of [...D]){ if(!L.endsWith(".wav")) continue; let Qe=h+":"+re.length+":"+ji(re); if(!Eu.has(Qe)) Eu.set(Qe, py(re,h)); D.set(L.replace(/\.wav$/,"_wav.frq"), Eu.get(Qe)); }
-    // 厳格化: ハングルエイリアスは同じハングルの wav だけに紐付ける (익 -> 아.wav のような誤紐付けを全部消す)
+    // 厳格化: ハングルエイリアスは同じハングルの wav だけに紐付ける
     {
       const _seenAlias = new Set();
       const _filtered = [];
@@ -458,21 +424,18 @@ async function generate(){
         const _wav = _m[1].split("/").pop();
         const _alRaw = _m[2];
         const _al = _alRaw.replace(/^_/,"");
-        // ハングル1文字のエイリアスなら、wav がそのハングル + .wav でなければ捨てる
         if(_al.length===1 && _al.charCodeAt(0)>=0xAC00 && _al.charCodeAt(0)<=0xD7A3){
-          if(_wav !== _al+".wav"){
-            continue;
-          }
+          if(_wav !== _al+".wav"){ continue; }
         }
-        // 同じエイリアスが既にあれば重複を捨てる (最初の正しいものを残す)
-        if(_seenAlias.has(_alRaw)){
-          continue;
-        }
+        if(_seenAlias.has(_alRaw)){ continue; }
         _seenAlias.add(_alRaw);
         _filtered.push(_line);
       }
       otoLines = _filtered;
     }
+    // frq は必ず作る (frqなしだとダメ)
+    let Eu=new Map;
+    for(let [L,re] of [...D]){ if(!L.endsWith(".wav")) continue; let Qe=h+":"+re.length+":"+ji(re); if(!Eu.has(Qe)) Eu.set(Qe, py(re,h)); D.set(L.replace(/\.wav$/,"_wav.frq"), Eu.get(Qe)); }
     put("oto.ini", encFn(otoLines.join("\r\n")+"\r\n"));
     const frqCount=[...D.keys()].filter(L=>L.endsWith(".frq")).length;
     const wavCount=[...D.keys()].filter(L=>L.endsWith(".wav")).length;
