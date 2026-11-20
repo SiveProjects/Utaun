@@ -350,9 +350,9 @@ async function generate(){
         const _wav = _j + ".wav";
         put(_wav, Zi(_seg));
         const _dur = Math.floor(_seg.length/$t*1000);
-        otoLines.push(`${_wav}=${_j},0,${_dur},0,15,15`);
-        otoLines.push(`${_wav}=_${_j},0,${_dur},0,15,15`);
-        if(useEnglish) otoLines.push(`${_wav}=${_consRom[_j]||_j},0,${_dur},0,15,15`);
+        const _preC = Math.max(10, _dur-10); otoLines.push(`${_wav}=${_j},0,${_dur},0,${_preC},10`);
+        otoLines.push(`${_wav}=_${_j},0,${_dur},0,${_preC},10`);
+        if(useEnglish) otoLines.push(`${_wav}=${_consRom[_j]||_j},0,${_dur},0,${_preC},10`);
       }
     }
     const CODA_JAMO = {"k":"ㄱ","n":"ㄴ","t":"ㄷ","l":"ㄹ","m":"ㅁ","p":"ㅂ","ng":"ㅇ","h":"ㅎ"};
