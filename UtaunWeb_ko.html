@@ -21,7 +21,7 @@
 }
 </style><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Utaun Web - CV+VC+フル frqあり 軽量版</title>
+<title>Utaun - 楽々モードだけ</title>
 <style>
 :root{--bg:#fff;--fg:#222;--border:#ddd;--input-bg:#f8f8f8;--panel-bg:#fff;--muted:#888}
 [data-theme="dark"]{--bg:#1a1a1a;--fg:#eee;--border:#444;--input-bg:#2a2a2a;--panel-bg:#222;--muted:#aaa}
@@ -51,7 +51,7 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <body>
 <div class="wrap" id="app" data-theme="light">
 <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:15px"><h1>Utaun</h1><button class="btn" onclick="toggleTheme()">🌙 / ☀️</button></div>
-<p style="text-align:center;font-size:12px;color:var(--muted);margin:-8px 0 12px">CV + VC + フル音節 / frqあり / ハングルだけ / 落ちない軽量版</p>
+<p style="text-align:center;font-size:12px;color:var(--muted);margin:-8px 0 12px">楽々モードだけ / パッチム無しCV + 子音 + 母音 / frqあり</p>
 <div class="card fix"><b>修正点</b><br>
 ・ㅐ (ae) 追加で 잭 が作れる。ㅣ が あ になるのを修正、他の母音も全部 あ になるのを修正<br>
 ・フォールバック削除で 익 が あ.wav に向くバグを修正。oto.ini は厳格化で同じハングルのwavだけに紐付く<br>
@@ -69,12 +69,12 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <p>ae系も入ってるから 잭 が作れる。</p>
 <textarea class="reclist" id="cvlist"></textarea>
 </div>
-<div class="card">
+<div class="card" style="display: none;">
 <h2>VC レコリスト（母音21 × パッチム8 = 168音）</h2>
 <p>パッチムのしっぽ用。<code>재</code> + <code>ae k</code> で <code>잭</code>、<code>이</code> + <code>i k</code> で <code>익</code></p>
 <textarea class="reclist" id="vclist"></textarea>
 </div>
-<div class="card" style="border-color:#2196f3">
+<div class="card" style="border-color: rgb(33, 150, 243); display: none;">
 <label style="cursor:pointer;font-size:14px"><input type="checkbox" id="chk-vc-only"> <b>母音＋子音だけ（40音）で作る</b></label>
 <div style="font-size:12px;color:var(--muted);margin-top:4px">母音21個（아 애 야 얘 어 에 여 예 오 와 왜 외 요 우 워 웨 위 유 으 의 이）＋ 子音19個（ㄱ ㄲ ㄴ ㄷ ㄸ ㄹ ㅁ ㅂ ㅃ ㅅ ㅆ ㅇ ㅈ ㅉ ㅊ ㅋ ㅌ ㅍ ㅎ）＝ 40音だけ。CV / VC / フル全部なし。いちばん軽くて絶対に生成される。한 は ㅎ+ㅏ+ㄴ、좋 は ㅈ+ㅗ+ㅎ で歌える。</div>
 </div>
@@ -82,12 +82,12 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <b>天才案：子音は子音のwavだけ！</b><br>
 <span style="font-size:12px;line-height:1.7">パッチムごとに作らなくても、<code>ㄱ.wav</code>、<code>ㄴ.wav</code> みたいに子音だけ19個あればいい。<code>한</code> なら <code>하</code> + <code>ㄴ</code> で歌える。</span>
 </div>
-<div class="card">
+<div class="card" style="display: none;">
 <label style="cursor:pointer;font-size:13px"><input type="checkbox" id="chk-full" checked=""> パッチム付きフル音節も作る（한, 글, 좋, 잭, 익 が1ノートで歌える）</label>
 <div style="font-size:12px;color:var(--muted);margin-top:4px">全部（3136音）にすると落ちるから、デフォルトは軽い版。all と書くと全部作る（重い・落ちるかも）。frq は必ず作る。</div>
 <div style="margin-top:6px"><label style="font-size:12px">フル音節を作るCV（カンマ区切り）</label><div class="tk-input-wrap"><input id="input-full-cv" type="text" value="ha, geu, jo, jae, i" placeholder="ha, geu, jo, jae, i"></div></div>
 </div>
-<div class="card">
+<div class="card" style="display: none;">
 <label style="cursor:pointer;font-size:13px"><input type="checkbox" id="chk-english"> 英語（ローマ字）エイリアスも入れる（ga / han とか）</label>
 <div style="font-size:12px;color:var(--muted);margin-top:4px">オフだとハングルだけ（가 / 한 / 잭 / 익）。oto.iniが半分くらいになって軽くなる。</div>
 </div>
@@ -187,7 +187,7 @@ function synthConsonantFallback(jamo){
   for(let i=0;i<n;i++) out[i]= i>=$t*0.01 && i<$t*0.015 ? (Math.random()*2-1)*20000 : 0; return out;
 }
 function synthCodaFallback(jamo){
-  if(jamo==="ㅇ"){ const n=Math.floor($t*0.05); const out=new Int16Array(n); for(let i=0;i<n;i++){const t=i/$t; out[i]=(0.6*Math.sin(2*Math.PI*250*t)+0.3*Math.sin(2*Math.PI*500*t))*10000;} return out; }
+  if(jamo==="ㅇ"){ return synthConsonantFallback("ㅁ"); } // 終声 ㅇ は ま子音 m から
   return synthConsonantFallback(jamo);
 }
 let height=242, f3=1;
@@ -196,6 +196,9 @@ document.getElementById('slider-f3').addEventListener('input', e=>{f3=+e.target.
 document.getElementById('cvlist').value = CV_LIST_DEFAULT.join('\n');
 document.getElementById('vclist').value = VC_LIST_DEFAULT.join('\n');
 function toggleTheme(){ const app=document.getElementById('app'); const cur=app.getAttribute('data-theme'); app.setAttribute('data-theme', cur==="dark"?"light":"dark"); }
+function hideOtherModes(){ const _hideIds=['chk-vc-only','chk-full','chk-all-patchim','chk-english']; for(const _id of _hideIds){ const _el=document.getElementById(_id); if(_el){ const _card=_el.closest('.card'); if(_card) _card.style.display='none'; } } const _vcCard=document.getElementById('vclist')?.closest('.card'); if(_vcCard) _vcCard.style.display='none'; const _fullInput=document.getElementById('input-full-cv')?.closest('.card'); if(_fullInput && _fullInput!==document.getElementById('chk-raku')?.closest('.card')) _fullInput.style.display='none'; }
+document.addEventListener('DOMContentLoaded', hideOtherModes);
+setTimeout(hideOtherModes, 100);
 async function playSample(ch){
   const h=height;
   let A={}; for(let L of ["아","이","우","오","애","어","에","으"]) A[L]=ly(L,h,1,f3);
@@ -257,7 +260,8 @@ async function generate(){
     let otoLines=[];
     for(let L of Object.keys(Ko)){ put(L+".wav", Zi(A[L])); }
     for(const [syll] of diphList){ put(syll+".wav", Zi(A[syll])); }
-    const vcOnly = !!(document.getElementById('chk-vc-only') && document.getElementById('chk-vc-only').checked);
+    const raku = true; // 楽々モードだけ
+    const vcOnly = false; // 楽々モードだけなので母音+子音だけはオフ && document.getElementById('chk-vc-only').checked);
     if(vcOnly){
       const _vowelList = ["아","애","야","얘","어","에","여","예","오","와","왜","외","요","우","워","웨","위","유","으","의","이"];
       for(const _v of _vowelList){ otoLines.push(`${_v}.wav=${_v},0,100,0,100,50`); otoLines.push(`${_v}.wav=_${_v},0,100,0,100,50`); }
@@ -352,7 +356,7 @@ async function generate(){
       }
     }
     const CODA_JAMO = {"k":"ㄱ","n":"ㄴ","t":"ㄷ","l":"ㄹ","m":"ㅁ","p":"ㅂ","ng":"ㅇ","h":"ㅎ"};
-    const vcText = document.getElementById('vclist').value;
+    const vcText = raku ? "" : document.getElementById('vclist').value;
     const vcTokens = vcText.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
     for(let idx=0; idx<vcTokens.length; idx++){
       const tok = vcTokens[idx];
@@ -411,7 +415,7 @@ async function generate(){
       }
     }
     // フル音節 (選んだCVだけ、デフォルトは軽い版)
-    if(document.getElementById('chk-full') && document.getElementById('chk-full').checked){
+    if(!raku && document.getElementById('chk-full') && document.getElementById('chk-full').checked){
       const _fullCvRaw = (document.getElementById('input-full-cv') ? document.getElementById('input-full-cv').value : "").trim();
       const _isAll = _fullCvRaw.toLowerCase()==="all";
       const _fullCvList = _isAll ? null : _fullCvRaw.split(",").map(s=>s.trim()).filter(Boolean);
