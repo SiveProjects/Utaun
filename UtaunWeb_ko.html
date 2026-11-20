@@ -80,7 +80,7 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 </div>
 <div class="card" style="border-color:#4caf50">
 <b>天才案：子音は子音のwavだけ！</b><br>
-<span style="font-size:12px;line-height:1.7">パッチムごとに作らなくても、<code>ㄱ.wav</code>、<code>ㄴ.wav</code> みたいに子音だけ19個あればいい。<code>한</code> なら <code>하</code> + <code>ㄴ</code> で歌える。</span>
+<span style="font-size:12px;line-height:1.7">パッチムごとに作らなくても、<code>ㄱ.wav</code>、<code>ㄴ.wav</code> みたいに子音だけ19個あればいい。終声の ㅇ は ま子音 (ㅁ / m) から作る。<code>한</code> なら <code>하</code> + <code>ㄴ</code> で歌える。</span>
 </div>
 <div class="card">
 <label style="cursor:pointer;font-size:13px"><input type="checkbox" id="chk-full" checked=""> パッチム付きフル音節も作る（한, 글, 좋, 잭, 익 が1ノートで歌える）</label>
@@ -187,7 +187,8 @@ function synthConsonantFallback(jamo){
   for(let i=0;i<n;i++) out[i]= i>=$t*0.01 && i<$t*0.015 ? (Math.random()*2-1)*20000 : 0; return out;
 }
 function synthCodaFallback(jamo){
-  if(jamo==="ㅇ"){ const n=Math.floor($t*0.05); const out=new Int16Array(n); for(let i=0;i<n;i++){const t=i/$t; out[i]=(0.6*Math.sin(2*Math.PI*250*t)+0.3*Math.sin(2*Math.PI*500*t))*10000;} return out; }
+  // 終声の ㅇ (ng) は ま子音 (ㅁ / m) から作る。鼻音どうしで自然になる
+  if(jamo==="ㅇ"){ return synthConsonantFallback("ㅁ"); }
   return synthConsonantFallback(jamo);
 }
 let height=242, f3=1;
@@ -261,6 +262,21 @@ async function generate(){
     if(vcOnly){
       const _vowelList = ["아","애","야","얘","어","에","여","예","오","와","왜","외","요","우","워","웨","위","유","으","의","이"];
       for(const _v of _vowelList){ otoLines.push(`${_v}.wav=${_v},0,100,0,100,50`); otoLines.push(`${_v}.wav=_${_v},0,100,0,100,50`); }
+      // 子音19個のwavもここで作る (else側にあったのを vcOnly でも作らないと無かった)
+      {
+        const _cons = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+        const _consRom = {"ㄱ":"k","ㄲ":"kk","ㄴ":"n","ㄷ":"t","ㄸ":"tt","ㄹ":"l","ㅁ":"m","ㅂ":"p","ㅃ":"pp","ㅅ":"s","ㅆ":"ss","ㅇ":"ng","ㅈ":"j","ㅉ":"jj","ㅊ":"ch","ㅋ":"k2","ㅌ":"t2","ㅍ":"p2","ㅎ":"h"};
+        for(const _j of _cons){
+          let _seg = synthCodaFallback(_j);
+          if(_seg.length < Math.floor($t*0.08)) { const _pad = new Int16Array(Math.floor($t*0.08)); _pad.set(_seg,0); _seg=_pad; }
+          const _wav = _j + ".wav";
+          put(_wav, Zi(_seg));
+          const _dur = Math.floor(_seg.length/$t*1000);
+          otoLines.push(`${_wav}=${_j},0,${_dur},0,15,15`);
+          otoLines.push(`${_wav}=_${_j},0,${_dur},0,15,15`);
+          if(useEnglish) otoLines.push(`${_wav}=${_consRom[_j]||_j},0,${_dur},0,15,15`);
+        }
+      }
       document.getElementById('log').textContent = "✅ 母音＋子音だけ 40音モード\n" + document.getElementById('log').textContent;
     } else {
     const cvText = document.getElementById('cvlist').value;
