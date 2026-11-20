@@ -351,7 +351,24 @@ async function generate(){
         // 外部フォルダの wav をそのまま使うので、ここでは加工しない
         if(_seg.length < Math.floor($t*0.08)) { const _pad = new Int16Array(Math.floor($t*0.08)); _pad.set(_seg,0); _seg=_pad; }
         const _wav = _j + ".wav";
-        // 外部フォルダの wav を使うので、ここでは wav を作らない (oto だけ書く)
+        // 子音単体 wav が入ってない問題を直す: 日本語wav名で wav を作る (1wavにつき1回だけ)
+        if(!window._doneJapWav) window._doneJapWav = new Set();
+        {
+          const _jw0 = _japWav[_j] || (_j + ".wav");
+          if(!window._doneJapWav.has(_jw0)){
+            window._doneJapWav.add(_jw0);
+            let _s2 = synthCodaFallback(_j);
+            // 借りた oto の vel 最大 116ms に合わせ 200ms に延ばす
+            const _tgt = Math.floor($t*0.2);
+            if(_s2.length < _tgt){
+              const _pad = new Int16Array(_tgt);
+              _pad.set(_s2,0);
+              for(let i=_s2.length;i<_tgt;i++){ _pad[i]=Math.floor(_s2[i % _s2.length]*0.3); }
+              _s2=_pad;
+            }
+            put(_jw0, Zi(_s2));
+          }
+        }
         const _dur = Math.floor(_seg.length/$t*1000);
         const _bf=_borrowedFull[_j]||[0,10,5,30,15]; const _jw=_japWav[_j]||(_j+".wav"); otoLines.push(`${_jw}=${_j},${_bf[0]},${_bf[1]},${_bf[2]},${_bf[3]},${_bf[4]}`);
         otoLines.push(`${_jw}=_${_j},${_bf[0]},${_bf[1]},${_bf[2]},${_bf[3]},${_bf[4]}`);
