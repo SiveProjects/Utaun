@@ -264,7 +264,7 @@ async function generate(){
     const vcOnly = false; // 楽々モードだけなので母音+子音だけはオフ && document.getElementById('chk-vc-only').checked);
     if(vcOnly){
       const _vowelList = ["아","애","야","얘","어","에","여","예","오","와","왜","외","요","우","워","웨","위","유","으","의","이"];
-      for(const _v of _vowelList){ otoLines.push(`${_v}.wav=${_v},0,10,90,30,15`); otoLines.push(`${_v}.wav=_${_v},0,10,90,30,15`); }
+      for(const _v of _vowelList){ otoLines.push(`${_v}.wav=${_v},0,10,10,30,15`); otoLines.push(`${_v}.wav=_${_v},0,10,10,30,15`); }
       document.getElementById('log').textContent = "✅ 母音＋子音だけ 40音モード\n" + document.getElementById('log').textContent;
     } else {
     const cvText = document.getElementById('cvlist').value;
@@ -327,13 +327,13 @@ async function generate(){
       if(hang && hang.length===1 && hang.charCodeAt(0)>=0xAC00 && (hang.charCodeAt(0)-0xAC00)%28===0){ fullSegMap.set(hang, seg); }
       const durMs=Math.floor(seg.length/$t*1000);
       const pre=Math.min(30, Math.floor(durMs*0.3));
-      if(useEnglish) otoLines.push(`${wavName}=${aliasRom},0,100,${durMs-10},${pre},15`);
+      if(useEnglish) otoLines.push(`${wavName}=${aliasRom},0,30,10,${pre},15`);
       if(hang && hang!==tok){
-        otoLines.push(`${wavName}=${hang},0,100,${durMs-10},${pre},15`);
-        if(useEnglish) otoLines.push(`${wavName}=_${aliasRom},0,100,${durMs-10},${pre},15`);
-        otoLines.push(`${wavName}=_${hang},0,100,${durMs-10},${pre},15`);
+        otoLines.push(`${wavName}=${hang},0,30,10,${pre},15`);
+        if(useEnglish) otoLines.push(`${wavName}=_${aliasRom},0,30,10,${pre},15`);
+        otoLines.push(`${wavName}=_${hang},0,30,10,${pre},15`);
       } else {
-        if(useEnglish) otoLines.push(`${wavName}=_${aliasRom},0,100,${durMs-10},${pre},15`);
+        if(useEnglish) otoLines.push(`${wavName}=_${aliasRom},0,30,10,${pre},15`);
       }
       const pct=Math.floor((idx+1)/cvTokens.length*100);
       document.getElementById('bar').style.width=pct+"%";
@@ -351,9 +351,9 @@ async function generate(){
         const _wav = _j + ".wav";
         put(_wav, Zi(_seg));
         const _dur = Math.floor(_seg.length/$t*1000);
-        const _preC = Math.max(10, _dur-10); const _b=_borrowed[_j]||[30,15]; otoLines.push(`${_wav}=${_j},0,10,${_dur-5},${_b[0]},${_b[1]}`);
-        otoLines.push(`${_wav}=_${_j},0,10,${_dur-5},${_b[0]},${_b[1]}`);
-        if(useEnglish) otoLines.push(`${_wav}=${_consRom[_j]||_j},0,10,${_dur-5},${_b[0]},${_b[1]}`);
+        const _preC = Math.max(10, _dur-10); const _b=_borrowed[_j]||[30,15]; otoLines.push(`${_wav}=${_j},0,10,5,${_b[0]},${_b[1]}`);
+        otoLines.push(`${_wav}=_${_j},0,10,5,${_b[0]},${_b[1]}`);
+        if(useEnglish) otoLines.push(`${_wav}=${_consRom[_j]||_j},0,10,5,${_b[0]},${_b[1]}`);
       }
     }
     const CODA_JAMO = {"k":"ㄱ","n":"ㄴ","t":"ㄷ","l":"ㄹ","m":"ㅁ","p":"ㅂ","ng":"ㅇ","h":"ㅎ"};
@@ -381,11 +381,11 @@ async function generate(){
       const preVC = Math.min(30, Math.floor(durMsVC*0.3));
       const aliasVC = vRom + " " + cRom;
       const aliasVC_nospace = vRom + cRom;
-      if(useEnglish) otoLines.push(`${wavNameVC}=${aliasVC},0,300,${durMsVC-10},${preVC},15`);
-      otoLines.push(`${wavNameVC}=${vcHang},0,300,${durMsVC-10},${preVC},15`);
-      if(useEnglish) otoLines.push(`${wavNameVC}=_${aliasVC},0,300,${durMsVC-10},${preVC},15`);
-      otoLines.push(`${wavNameVC}=_${vcHang},0,300,${durMsVC-10},${preVC},15`);
-      if(useEnglish) otoLines.push(`${wavNameVC}=${aliasVC_nospace},0,300,${durMsVC-10},${preVC},15`);
+      if(useEnglish) otoLines.push(`${wavNameVC}=${aliasVC},0,100,10,${preVC},15`);
+      otoLines.push(`${wavNameVC}=${vcHang},0,100,10,${preVC},15`);
+      if(useEnglish) otoLines.push(`${wavNameVC}=_${aliasVC},0,100,10,${preVC},15`);
+      otoLines.push(`${wavNameVC}=_${vcHang},0,100,10,${preVC},15`);
+      if(useEnglish) otoLines.push(`${wavNameVC}=${aliasVC_nospace},0,100,10,${preVC},15`);
       if(idx%10===0) await new Promise(r=>setTimeout(r,0));
     }
     // 母音だけ + パッチム (익, 악, 욱 など) を純粋な母音から作り直す
@@ -408,8 +408,8 @@ async function generate(){
           if(!_has2){
             const _dur2=Math.floor(_seg2.length/$t*1000);
             const _pre2=Math.min(30, Math.floor(_dur2*0.3));
-            otoLines.push(`${_wav2}=${_fullHang2},0,100,${_dur2-10},${_pre2},15`);
-            otoLines.push(`${_wav2}=_${_fullHang2},0,100,${_dur2-10},${_pre2},15`);
+            otoLines.push(`${_wav2}=${_fullHang2},0,30,10,${_pre2},15`);
+            otoLines.push(`${_wav2}=_${_fullHang2},0,30,10,${_pre2},15`);
           }
         }
         await new Promise(r=>setTimeout(r,0));
@@ -441,18 +441,18 @@ async function generate(){
             const _durFull=Math.floor(_fullSeg.length/$t*1000);
             const _preFull=Math.min(30, Math.floor(_durFull*0.3));
             const _romFull=_baseRom + _cRom;
-            otoLines.push(`${_fullWav}=${_fullHang},0,100,${_durFull-10},${_preFull},15`);
-            otoLines.push(`${_fullWav}=_${_fullHang},0,100,${_durFull-10},${_preFull},15`);
-            if(useEnglish) otoLines.push(`${_fullWav}=${_romFull},0,100,${_durFull-10},${_preFull},15`);
-            if(useEnglish) otoLines.push(`${_fullWav}=_${_romFull},0,100,${_durFull-10},${_preFull},15`);
+            otoLines.push(`${_fullWav}=${_fullHang},0,30,10,${_preFull},15`);
+            otoLines.push(`${_fullWav}=_${_fullHang},0,30,10,${_preFull},15`);
+            if(useEnglish) otoLines.push(`${_fullWav}=${_romFull},0,30,10,${_preFull},15`);
+            if(useEnglish) otoLines.push(`${_fullWav}=_${_romFull},0,30,10,${_preFull},15`);
           }
           await new Promise(r=>setTimeout(r,0));
         }
       }
     }
     } // vcOnly else 終わり
-    if(!vcOnly){ for(let L of Object.keys(Ko)){ otoLines.push(`${L}.wav=${L},0,10,90,30,15`); } }
-    for(const [syll] of diphList){ otoLines.push(`${syll}.wav=${syll},0,10,25,15,10`); }
+    if(!vcOnly){ for(let L of Object.keys(Ko)){ otoLines.push(`${L}.wav=${L},0,10,10,30,15`); } }
+    for(const [syll] of diphList){ otoLines.push(`${syll}.wav=${syll},0,10,5,15,10`); }
     // 厳格化: ハングルエイリアスは同じハングルの wav だけに紐付ける
     {
       const _seenAlias = new Set();
