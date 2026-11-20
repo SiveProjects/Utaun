@@ -1,27 +1,6 @@
-<html lang="ja"><head><style>
-@font-face {
-  font-family: "Optimistic";
-  font-style: normal;
-  font-weight: 400 600;
-  font-display: swap;
-  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Optimistic Mono";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
-}
-:where(html) {
-  font-family: "Optimistic", system-ui, sans-serif;
-}
-:where(code, pre, kbd, samp) {
-  font-family: "Optimistic Mono", ui-monospace, monospace;
-}
-</style><meta charset="utf-8">
+<html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Utaun Web - CV+VC+フル frqあり 軽量版</title>
+<title>Utaun Web 韓国語仮</title>
 <style>
 :root{--bg:#fff;--fg:#222;--border:#ddd;--input-bg:#f8f8f8;--panel-bg:#fff;--muted:#888}
 [data-theme="dark"]{--bg:#1a1a1a;--fg:#eee;--border:#444;--input-bg:#2a2a2a;--panel-bg:#222;--muted:#aaa}
@@ -75,7 +54,7 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <textarea class="reclist" id="vclist"></textarea>
 </div>
 <div class="card" style="border-color:#2196f3">
-<label style="cursor:pointer;font-size:14px"><input type="checkbox" id="chk-vc-only"> <b>母音＋子音だけ（40音）で作る</b></label>
+<label style="cursor:pointer;font-size:14px"><input type="checkbox" id="chk-vc-only" checked> <b>母音＋子音だけ（40音）で作る</b></label>
 <div style="font-size:12px;color:var(--muted);margin-top:4px">母音21個（아 애 야 얘 어 에 여 예 오 와 왜 외 요 우 워 웨 위 유 으 의 이）＋ 子音19個（ㄱ ㄲ ㄴ ㄷ ㄸ ㄹ ㅁ ㅂ ㅃ ㅅ ㅆ ㅇ ㅈ ㅉ ㅊ ㅋ ㅌ ㅍ ㅎ）＝ 40音だけ。CV / VC / フル全部なし。いちばん軽くて絶対に生成される。한 は ㅎ+ㅏ+ㄴ、좋 は ㅈ+ㅗ+ㅎ で歌える。</div>
 </div>
 <div class="card" style="border-color:#4caf50">
@@ -178,13 +157,72 @@ function romajiToHangul(tok){
   return tok;
 }
 function synthConsonantFallback(jamo){
-  const n=Math.floor($t*0.03); const out=new Int16Array(n);
-  if(jamo==="ㄴ"||jamo==="ㅁ"){ for(let i=0;i<n;i++){const t=i/$t; out[i]=(0.6*Math.sin(2*Math.PI*250*t)+0.3*Math.sin(2*Math.PI*500*t))*12000;} return out; }
-  if(jamo==="ㅅ"||jamo==="ㅆ"){ for(let i=0;i<n;i++) out[i]=(Math.random()*2-1)*12000; return out; }
-  if(jamo==="ㅎ"){ for(let i=0;i<n;i++) out[i]=(Math.random()*2-1)*8000; return out; }
-  if(jamo==="ㄹ"){ for(let i=0;i<n;i++){const t=i/$t; out[i]=0.5*Math.sin(2*Math.PI*500*t)*12000*(1-t/0.03);} return out; }
-  if(["ㅋ","ㅌ","ㅍ","ㅊ"].includes(jamo)){ for(let i=0;i<n;i++) out[i]= i<$t*0.01?0:(Math.random()*2-1)*12000*(1-i/n); return out; }
-  for(let i=0;i<n;i++) out[i]= i>=$t*0.01 && i<$t*0.015 ? (Math.random()*2-1)*20000 : 0; return out;
+  const dur = ["ㅋ","ㅌ","ㅍ","ㅊ","ㅅ","ㅆ","ㅎ"].includes(jamo) ? 0.08 : 0.06;
+  const n = Math.floor($t * dur);
+  const out = new Int16Array(n);
+  // 鼻音・流音
+  if(jamo==="ㄴ"){ for(let i=0;i<n;i++){const t=i/$t; out[i]=(0.65*Math.sin(2*Math.PI*240*t)+0.25*Math.sin(2*Math.PI*480*t))*14000;} return out; }
+  if(jamo==="ㅁ"){ for(let i=0;i<n;i++){const t=i/$t; out[i]=(0.7*Math.sin(2*Math.PI*190*t)+0.2*Math.sin(2*Math.PI*380*t))*14000;} return out; }
+  if(jamo==="ㅇ"){ for(let i=0;i<n;i++){const t=i/$t; out[i]=(0.6*Math.sin(2*Math.PI*210*t)+0.3*Math.sin(2*Math.PI*630*t))*13000;} return out; }
+  if(jamo==="ㄹ"){ for(let i=0;i<n;i++){const t=i/$t; out[i]=(0.55*Math.sin(2*Math.PI*460*t)+0.2*Math.sin(2*Math.PI*920*t))*13000*(1-0.5*(i/n));} return out; }
+  // 摩擦音・気音
+  if(jamo==="ㅅ"){ for(let i=0;i<n;i++){const env=Math.sin(Math.PI*(i/n)); out[i]=(Math.random()*2-1)*13000*env;} return out; }
+  if(jamo==="ㅆ"){ for(let i=0;i<n;i++){const env=i<n*0.15?0.1:Math.sin(Math.PI*((i-n*0.15)/(n*0.85))); out[i]=(Math.random()*2-1)*16000*env;} return out; }
+  if(jamo==="ㅎ"){ for(let i=0;i<n;i++){const env=Math.sin(Math.PI*(i/n)); out[i]=(Math.random()*2-1)*10500*env;} return out; }
+  // 激音 (ㅋ, ㅌ, ㅍ, ㅊ): 強い破裂バースト + しっかりした息の減衰
+  if(["ㅋ","ㅌ","ㅍ","ㅊ"].includes(jamo)){
+    const burstStart = Math.floor($t*0.008);
+    const burstEnd = Math.floor($t*0.016);
+    const pitchMap = {"ㅋ":1400,"ㅌ":2200,"ㅍ":900,"ㅊ":3000};
+    const f0 = pitchMap[jamo] || 1800;
+    for(let i=0;i<n;i++){
+      const t = i/$t;
+      if(i < burstStart){ out[i] = 0; }
+      else if(i < burstEnd){
+        const burst = (Math.random()*2-1)*0.7 + 0.3*Math.sin(2*Math.PI*f0*t);
+        out[i] = Math.max(-32767, Math.min(32767, Math.trunc(burst * 22000)));
+      } else {
+        const decay = 1 - (i - burstEnd) / (n - burstEnd);
+        const asp = (Math.random()*2-1)*0.85 + 0.15*Math.sin(2*Math.PI*f0*t);
+        out[i] = Math.max(-32767, Math.min(32767, Math.trunc(asp * 15000 * decay)));
+      }
+    }
+    return out;
+  }
+  // 濃音 (ㄲ, ㄸ, ㅃ, ㅉ): 溜め + 鋭いアタック
+  if(["ㄲ","ㄸ","ㅃ","ㅉ"].includes(jamo)){
+    const hit = Math.floor($t*0.018);
+    const len = Math.floor($t*0.008);
+    const pitchMap = {"ㄲ":1200,"ㄸ":1900,"ㅃ":800,"ㅉ":2600};
+    const f0 = pitchMap[jamo] || 1500;
+    for(let i=0;i<n;i++){
+      const t = i/$t;
+      if(i >= hit && i < hit + len){
+        const sig = (Math.random()*2-1)*0.6 + 0.4*Math.sin(2*Math.PI*f0*t);
+        out[i] = Math.max(-32767, Math.min(32767, Math.trunc(sig * 24000)));
+      } else if(i >= hit + len){
+        const decay = Math.max(0, 1 - (i - (hit + len)) / (n - (hit + len)));
+        out[i] = Math.trunc((Math.random()*2-1) * 5000 * decay);
+      }
+    }
+    return out;
+  }
+  // 平音 (ㄱ, ㄷ, ㅂ, ㅈ)
+  const hit = Math.floor($t*0.01);
+  const len = Math.floor($t*0.008);
+  const pitchMap = {"ㄱ":1100,"ㄷ":1800,"ㅂ":750,"ㅈ":2500};
+  const f0 = pitchMap[jamo] || 1400;
+  for(let i=0;i<n;i++){
+    const t = i/$t;
+    if(i >= hit && i < hit + len){
+      const sig = (Math.random()*2-1)*0.65 + 0.35*Math.sin(2*Math.PI*f0*t);
+      out[i] = Math.max(-32767, Math.min(32767, Math.trunc(sig * 19000)));
+    } else if(i >= hit + len){
+      const decay = Math.max(0, 1 - (i - (hit + len)) / (n - (hit + len)));
+      out[i] = Math.trunc((Math.random()*2-1) * 6500 * decay);
+    }
+  }
+  return out;
 }
 function synthCodaFallback(jamo){
   // 終声の ㅇ (ng) は ま子音 (ㅁ / m) から作る。鼻音どうしで自然になる
@@ -231,7 +269,7 @@ async function generate(){
     const useEnglish = !!(document.getElementById('chk-english') && document.getElementById('chk-english').checked);
     const D=new Map();
     const fullSegMap=new Map();
-    const put=(p,bytes)=>D.set(folder+p, bytes);
+    const put=(p,bytes)=>D.set((folder+p).normalize("NFC"), bytes);
     const warnings=new Set();
     put("character.txt", encFn(`name=${name}\r\nimage=icon.jpg\r\nauthor=${author}`));
     put("readme.txt", encFn(readme.replace(/\r?\n/g,"\r\n")));
@@ -261,23 +299,32 @@ async function generate(){
     const vcOnly = !!(document.getElementById('chk-vc-only') && document.getElementById('chk-vc-only').checked);
     if(vcOnly){
       const _vowelList = ["아","애","야","얘","어","에","여","예","오","와","왜","외","요","우","워","웨","위","유","으","의","이"];
-      for(const _v of _vowelList){ otoLines.push(`${_v}.wav=${_v},0,100,0,100,50`); otoLines.push(`${_v}.wav=_${_v},0,100,0,100,50`); }
-      // 子音19個のwavもここで作る (else側にあったのを vcOnly でも作らないと無かった)
-      {
-        const _cons = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
-        const _consRom = {"ㄱ":"k","ㄲ":"kk","ㄴ":"n","ㄷ":"t","ㄸ":"tt","ㄹ":"l","ㅁ":"m","ㅂ":"p","ㅃ":"pp","ㅅ":"s","ㅆ":"ss","ㅇ":"ng","ㅈ":"j","ㅉ":"jj","ㅊ":"ch","ㅋ":"k2","ㅌ":"t2","ㅍ":"p2","ㅎ":"h"};
-        for(const _j of _cons){
-          let _seg = synthCodaFallback(_j);
-          if(_seg.length < Math.floor($t*0.08)) { const _pad = new Int16Array(Math.floor($t*0.08)); _pad.set(_seg,0); _seg=_pad; }
-          const _wav = _j + ".wav";
-          put(_wav, Zi(_seg));
-          const _dur = Math.floor(_seg.length/$t*1000);
-          otoLines.push(`${_wav}=${_j},0,${_dur},0,15,15`);
-          otoLines.push(`${_wav}=_${_j},0,${_dur},0,15,15`);
-          if(useEnglish) otoLines.push(`${_wav}=${_consRom[_j]||_j},0,${_dur},0,15,15`);
-        }
+      for(const _v of _vowelList){
+        const _vNorm = _v.normalize("NFC");
+        if(!A[_vNorm]) A[_vNorm] = ly(_vNorm,h,1,f3);
+        put(_vNorm + ".wav", Zi(A[_vNorm]));
+        otoLines.push(`${_vNorm}.wav=${_vNorm},0,100,0,100,50`);
+        otoLines.push(`${_vNorm}.wav=_${_vNorm},0,100,0,100,50`);
       }
-      document.getElementById('log').textContent = "✅ 母音＋子音だけ 40音モード\n" + document.getElementById('log').textContent;
+      // 子音19個を確実に生成（ㄱ ㄲ ㄴ ㄷ ㄸ ㄹ ㅁ ㅂ ㅃ ㅅ ㅆ ㅇ ㅈ ㅉ ㅊ ㅋ ㅌ ㅍ ㅎ）
+      const _cons = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+      const _consRom = {"ㄱ":"k","ㄲ":"kk","ㄴ":"n","ㄷ":"t","ㄸ":"tt","ㄹ":"l","ㅁ":"m","ㅂ":"p","ㅃ":"pp","ㅅ":"s","ㅆ":"ss","ㅇ":"ng","ㅈ":"j","ㅉ":"jj","ㅊ":"ch","ㅋ":"k2","ㅌ":"t2","ㅍ":"p2","ㅎ":"h"};
+      for(const _jRaw of _cons){
+        const _j = _jRaw.normalize("NFC");
+        let _seg = synthConsonantFallback(_j);
+        if(_seg.length < Math.floor($t*0.08)) {
+          const _pad = new Int16Array(Math.floor($t*0.08));
+          _pad.set(_seg,0);
+          _seg = _pad;
+        }
+        const _wav = _j + ".wav";
+        put(_wav, Zi(_seg));
+        const _dur = Math.floor(_seg.length/$t*1000);
+        otoLines.push(`${_wav}=${_j},0,${_dur},0,15,15`);
+        otoLines.push(`${_wav}=_${_j},0,${_dur},0,15,15`);
+        if(useEnglish) otoLines.push(`${_wav}=${_consRom[_j]||_j},0,${_dur},0,15,15`);
+      }
+      document.getElementById('log').textContent = "✅ 母音21個＋子音19個＝40音モード（ㅋ・ㅌ含む全子音生成）\n" + document.getElementById('log').textContent;
     } else {
     const cvText = document.getElementById('cvlist').value;
     const cvTokens = cvText.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
@@ -462,8 +509,10 @@ async function generate(){
       }
     }
     } // vcOnly else 終わり
-    if(!vcOnly){ for(let L of Object.keys(Ko)){ otoLines.push(`${L}.wav=${L},0,100,0,100,50`); } }
-    for(const [syll] of diphList){ otoLines.push(`${syll}.wav=${syll},0,30,0,30,15`); }
+    if(!vcOnly){
+      for(let L of Object.keys(Ko)){ otoLines.push(`${L}.wav=${L},0,100,0,100,50`); }
+      for(const [syll] of diphList){ otoLines.push(`${syll}.wav=${syll},0,30,0,30,15`); }
+    }
     // 厳格化: ハングルエイリアスは同じハングルの wav だけに紐付ける
     {
       const _seenAlias = new Set();
@@ -494,12 +543,13 @@ async function generate(){
     try{ blob=await iy(D); }catch(_e){ document.getElementById('status').textContent='zip生成で失敗: '+(_e?.message||String(_e)); throw _e; }
     const url=URL.createObjectURL(blob);
     const a=document.createElement("a"); a.href=url; a.download=(name ? name.replace(/[\\/:*?"<>|]/g,"_") : "voicebank")+".zip"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),10000);
+    const wavNames = [...D.keys()].filter(L=>L.endsWith(".wav")).map(L=>L.split("/").pop().replace(".wav",""));
     document.getElementById('status').textContent=`生成完了！ wav ${wavCount}個 / frq ${frqCount}個 / oto ${otoLines.length}行`;
+    document.getElementById('log').textContent=`生成されたWAV (${wavNames.length}個): ${wavNames.join(" ")}\n` + document.getElementById('log').textContent;
     document.getElementById('log').textContent=`oto.ini 先頭10行:\n`+otoLines.slice(0,10).join("\n")+"\n…\n"+document.getElementById('log').textContent;
     if(warnings.size) alert("44100Hz / 16bit / モノラル以外のwavがあります:\n"+[...warnings].join("\n"));
   }catch(e){ alert("生成エラー: "+(e?.message||String(e))); document.getElementById('status').textContent='エラー'; }
   finally{ generating=false; document.getElementById('btn-gen').disabled=false; }
 }
 </script>
-<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script>
 </body></html>
