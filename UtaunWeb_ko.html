@@ -55,7 +55,7 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <div class="card fix"><b>修正点</b><br>
 ・ㅐ (ae) 追加で 잭 が作れる。ㅣ が あ になるのを修正、他の母音も全部 あ になるのを修正<br>
 ・フォールバック削除で 익 が あ.wav に向くバグを修正。oto.ini は厳格化で同じハングルのwavだけに紐付く<br>
-・R / br なし (aR, iR, br みたいな呼吸・休符は UTAU側が足すから作らない)。フルは全部だと落ちるから、デフォルトは ha, geu, jo, jae, i だけの軽い版。frq は必ず作る
+・フルは全部 (3136音) だと落ちるから、デフォルトは ha, geu, jo, jae, i だけの軽い版。frq は必ず作る
 </div>
 <div style="margin-bottom:12px;text-align:center"><label for="input-name">名前</label><div class="tk-input-wrap"><input id="input-name" type="text" value="" placeholder=""></div></div>
 <div style="margin-bottom:12px;text-align:center"><label for="input-author">作者</label><div class="tk-input-wrap"><input id="input-author" type="text" value="" placeholder=""></div></div>
@@ -74,9 +74,17 @@ textarea.reclist{width:100%;height:220px;border:1px solid var(--border);border-r
 <p>パッチムのしっぽ用。<code>재</code> + <code>ae k</code> で <code>잭</code>、<code>이</code> + <code>i k</code> で <code>익</code></p>
 <textarea class="reclist" id="vclist"></textarea>
 </div>
+<div class="card" style="border-color:#2196f3">
+<label style="cursor:pointer;font-size:14px"><input type="checkbox" id="chk-vc-only"> <b>母音＋子音だけ（40音）で作る</b></label>
+<div style="font-size:12px;color:var(--muted);margin-top:4px">母音21個（아 애 야 얘 어 에 여 예 오 와 왜 외 요 우 워 웨 위 유 으 의 이）＋ 子音19個（ㄱ ㄲ ㄴ ㄷ ㄸ ㄹ ㅁ ㅂ ㅃ ㅅ ㅆ ㅇ ㅈ ㅉ ㅊ ㅋ ㅌ ㅍ ㅎ）＝ 40音だけ。CV / VC / フル全部なし。いちばん軽くて絶対に生成される。한 は ㅎ+ㅏ+ㄴ、좋 は ㅈ+ㅗ+ㅎ で歌える。</div>
+</div>
+<div class="card" style="border-color:#4caf50">
+<b>天才案：子音は子音のwavだけ！</b><br>
+<span style="font-size:12px;line-height:1.7">パッチムごとに作らなくても、<code>ㄱ.wav</code>、<code>ㄴ.wav</code> みたいに子音だけ19個あればいい。<code>한</code> なら <code>하</code> + <code>ㄴ</code> で歌える。</span>
+</div>
 <div class="card">
 <label style="cursor:pointer;font-size:13px"><input type="checkbox" id="chk-full" checked=""> パッチム付きフル音節も作る（한, 글, 좋, 잭, 익 が1ノートで歌える）</label>
-<div style="font-size:12px;color:var(--muted);margin-top:4px">全部（3136音）にすると落ちるから、デフォルトは軽い版 ha, geu, jo, jae, i だけ。한 は ha + n、글 は geu + l だから軽い版でも 한, 글 はあるはず。無いときは all にして。</div>
+<div style="font-size:12px;color:var(--muted);margin-top:4px">全部（3136音）にすると落ちるから、デフォルトは軽い版。all と書くと全部作る（重い・落ちるかも）。frq は必ず作る。</div>
 <div style="margin-top:6px"><label style="font-size:12px">フル音節を作るCV（カンマ区切り）</label><div class="tk-input-wrap"><input id="input-full-cv" type="text" value="ha, geu, jo, jae, i" placeholder="ha, geu, jo, jae, i"></div></div>
 </div>
 <div class="card">
@@ -204,7 +212,10 @@ async function playSample(ch){
 }
 let generating=false;
 async function generate(){
-  if(generating) return; generating=true;
+  if(generating){ document.getElementById('status').textContent='もう生成中だよ。終わるまで待って。'; return; }
+  generating=true;
+  document.getElementById('status').textContent='生成開始…';
+  document.getElementById('log').textContent='生成開始…\n' + document.getElementById('log').textContent;
   document.getElementById('btn-gen').disabled=true;
   document.getElementById('status').textContent='生成中…';
   await new Promise(r=>setTimeout(r,30));
@@ -213,13 +224,7 @@ async function generate(){
     const author=(document.getElementById('input-author').value.trim()||"").normalize("NFC");
     const readme=(document.getElementById('input-readme').value||"").normalize("NFC");
     let enc=document.querySelector('input[name="encoding"]:checked').value;
-    // ハングルは Shift-JIS に無いから ? になる。ハングル版は UTF-8 強制
-    if(enc==="shift_jis"){
-      alert("ハングルは Shift-JIS だと ? になるから、UTF-8 で作るね");
-      enc="utf-8";
-      const _utf=document.querySelector('input[name="encoding"][value="utf-8"]');
-      if(_utf) _utf.checked=true;
-    }
+    if(enc==="shift_jis"){ alert("ハングルは Shift-JIS だと ? になるから、UTF-8 で作るね"); enc="utf-8"; const _utf=document.querySelector('input[name="encoding"][value="utf-8"]'); if(_utf) _utf.checked=true; }
     const folder=name ? name.replace(/[\\/:*?"<>|]/g,"_")+"/" : "";
     const encFn=(s)=>cy(s,enc);
     const useEnglish = !!(document.getElementById('chk-english') && document.getElementById('chk-english').checked);
@@ -252,6 +257,12 @@ async function generate(){
     let otoLines=[];
     for(let L of Object.keys(Ko)){ put(L+".wav", Zi(A[L])); }
     for(const [syll] of diphList){ put(syll+".wav", Zi(A[syll])); }
+    const vcOnly = !!(document.getElementById('chk-vc-only') && document.getElementById('chk-vc-only').checked);
+    if(vcOnly){
+      const _vowelList = ["아","애","야","얘","어","에","여","예","오","와","왜","외","요","우","워","웨","위","유","으","의","이"];
+      for(const _v of _vowelList){ otoLines.push(`${_v}.wav=${_v},0,100,0,100,50`); otoLines.push(`${_v}.wav=_${_v},0,100,0,100,50`); }
+      document.getElementById('log').textContent = "✅ 母音＋子音だけ 40音モード\n" + document.getElementById('log').textContent;
+    } else {
     const cvText = document.getElementById('cvlist').value;
     const cvTokens = cvText.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
     for(let idx=0; idx<cvTokens.length; idx++){
@@ -324,6 +335,21 @@ async function generate(){
       document.getElementById('bar').style.width=pct+"%";
       document.getElementById('status').textContent=`生成中… CV ${idx+1} / ${cvTokens.length} (${pct}%)`;
       if(idx%5===0) await new Promise(r=>setTimeout(r,0));
+    }
+    // 子音だけ19個
+    {
+      const _cons = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+      const _consRom = {"ㄱ":"k","ㄲ":"kk","ㄴ":"n","ㄷ":"t","ㄸ":"tt","ㄹ":"l","ㅁ":"m","ㅂ":"p","ㅃ":"pp","ㅅ":"s","ㅆ":"ss","ㅇ":"ng","ㅈ":"j","ㅉ":"jj","ㅊ":"ch","ㅋ":"k2","ㅌ":"t2","ㅍ":"p2","ㅎ":"h"};
+      for(const _j of _cons){
+        let _seg = synthCodaFallback(_j);
+        if(_seg.length < Math.floor($t*0.08)) { const _pad = new Int16Array(Math.floor($t*0.08)); _pad.set(_seg,0); _seg=_pad; }
+        const _wav = _j + ".wav";
+        put(_wav, Zi(_seg));
+        const _dur = Math.floor(_seg.length/$t*1000);
+        otoLines.push(`${_wav}=${_j},0,${_dur},0,15,15`);
+        otoLines.push(`${_wav}=_${_j},0,${_dur},0,15,15`);
+        if(useEnglish) otoLines.push(`${_wav}=${_consRom[_j]||_j},0,${_dur},0,15,15`);
+      }
     }
     const CODA_JAMO = {"k":"ㄱ","n":"ㄴ","t":"ㄷ","l":"ㄹ","m":"ㅁ","p":"ㅂ","ng":"ㅇ","h":"ㅎ"};
     const vcText = document.getElementById('vclist').value;
@@ -419,7 +445,8 @@ async function generate(){
         }
       }
     }
-    for(let L of Object.keys(Ko)){ otoLines.push(`${L}.wav=${L},0,100,0,100,50`); }
+    } // vcOnly else 終わり
+    if(!vcOnly){ for(let L of Object.keys(Ko)){ otoLines.push(`${L}.wav=${L},0,100,0,100,50`); } }
     for(const [syll] of diphList){ otoLines.push(`${syll}.wav=${syll},0,30,0,30,15`); }
     // 厳格化: ハングルエイリアスは同じハングルの wav だけに紐付ける
     {
@@ -447,19 +474,11 @@ async function generate(){
     const frqCount=[...D.keys()].filter(L=>L.endsWith(".frq")).length;
     const wavCount=[...D.keys()].filter(L=>L.endsWith(".wav")).length;
     if(frqCount===0) throw Error("frqが0個でした（wav:"+wavCount+"個）");
-    const blob=await iy(D);
+    let blob;
+    try{ blob=await iy(D); }catch(_e){ document.getElementById('status').textContent='zip生成で失敗: '+(_e?.message||String(_e)); throw _e; }
     const url=URL.createObjectURL(blob);
     const a=document.createElement("a"); a.href=url; a.download=(name ? name.replace(/[\\/:*?"<>|]/g,"_") : "voicebank")+".zip"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),10000);
     document.getElementById('status').textContent=`生成完了！ wav ${wavCount}個 / frq ${frqCount}個 / oto ${otoLines.length}行`;
-    {
-      const _need=["한","글","좋","잭","익"];
-      const _missing=_need.filter(_h=>!otoLines.some(_l=>_l.includes("="+_h+",")||_l.includes("=_"+_h+",")));
-      if(_missing.length>0){
-        document.getElementById('log').textContent = "⚠️ フルに無い: "+_missing.join(", ")+" → フル音節の欄を all にすると全部出るよ\n" + document.getElementById('log').textContent;
-      } else {
-        document.getElementById('log').textContent = "✅ 한, 글, 좋, 잭, 익 全部あるよ\n" + document.getElementById('log').textContent;
-      }
-    }
     document.getElementById('log').textContent=`oto.ini 先頭10行:\n`+otoLines.slice(0,10).join("\n")+"\n…\n"+document.getElementById('log').textContent;
     if(warnings.size) alert("44100Hz / 16bit / モノラル以外のwavがあります:\n"+[...warnings].join("\n"));
   }catch(e){ alert("生成エラー: "+(e?.message||String(e))); document.getElementById('status').textContent='エラー'; }
